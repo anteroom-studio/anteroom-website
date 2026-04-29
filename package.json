@@ -1,28 +1,20 @@
 {
-  "name": "anteroom",
-  "version": "0.1.0",
+  "name": "anteroom-studio",
+  "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
-    "lenis": "^1.3.23",
-    "next": "^15.5.15",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "framer-motion": "latest",
+    "lucide-react": "latest"
   },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "^15.5.15",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  }
+  "devDependencies": {}
 }
