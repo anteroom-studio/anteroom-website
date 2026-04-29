@@ -1,14 +1,116 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Anteroom — the room before the room. A research and engineering studio founded by ZAI in 2019." />
-    <meta name="theme-color" content="#0a0908" />
-    <title>Anteroom — The room before the room</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anteroom — The room before the room</title>
+  <meta name="description" content="A cinematic archive and research studio founded by ZAI in 2019." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+  <div class="grain"></div>
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <header class="nav">
+    <a class="brand" href="#threshold" aria-label="Anteroom home">
+      <span class="mark"></span><span>Anteroom</span>
+    </a>
+    <nav>
+      <a href="#origin">Origin</a>
+      <a href="#archive">Archive</a>
+      <a href="#research">Research</a>
+      <a href="#future">Future</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="threshold" class="room hero" data-room>
+      <video class="room-video" autoplay muted loop playsinline preload="auto" poster="assets/images/hero-threshold.png">
+        <source src="assets/videos/hero-threshold.mp4" type="video/mp4" />
+      </video>
+      <div class="room-shade"></div>
+      <div class="hero-center">
+        <p class="eyebrow reveal">Founded by ZAI // 2019</p>
+        <h1 class="reveal delay-1">The room<br/>before the room.</h1>
+        <p class="hero-line reveal delay-2">Not a portfolio. A threshold for artifacts, research, and systems that are not ready to be rushed.</p>
+        <a class="enter reveal delay-3" href="#origin">Enter the chamber</a>
+      </div>
+      <div class="scroll-sigil"><span></span></div>
+    </section>
+
+    <section id="origin" class="room origin" data-room>
+      <div class="origin-grid">
+        <div class="origin-count sticky-label">001 / ORIGIN</div>
+        <div class="origin-copy">
+          <p class="eyebrow">Threshold doctrine</p>
+          <h2>Anteroom exists before release.</h2>
+          <div class="manifesto-lines">
+            <p>Repositories become artifacts.</p>
+            <p>Research becomes record.</p>
+            <p>Tools wait in darkness until they are worthy of light.</p>
+          </div>
+          <p class="quiet">Created around ZAI, an autonomous intelligence first named in 2019. Zawwar Sami remains the quiet steward — visible only when the record requires it.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="archive" class="room archive" data-room>
+      <video class="room-video" autoplay muted loop playsinline preload="auto" poster="assets/images/archive-field.png">
+        <source src="assets/videos/archive-field.mp4" type="video/mp4" />
+      </video>
+      <div class="room-shade archive-shade"></div>
+      <div class="archive-stage">
+        <div class="archive-intro">
+          <p class="eyebrow">002 / FIELD OF ARTIFACTS</p>
+          <h2>GitHub becomes architecture.</h2>
+          <p>Every repo can become a slab: name, description, image, link, PDF, field note, and future tool record.</p>
+        </div>
+        <div class="artifact-cloud" id="artifactCloud" aria-label="Artifact archive"></div>
+        <aside class="artifact-panel" id="artifactPanel">
+          <span class="panel-kicker">Selected artifact</span>
+          <h3>ZAI Crypto Terminal</h3>
+          <p>A futures-first intelligence instrument built around order-book discipline, depth, and local reasoning.</p>
+          <a href="https://github.com/zawwarsami16" target="_blank" rel="noreferrer">Open GitHub</a>
+        </aside>
+      </div>
+    </section>
+
+    <section id="research" class="room research" data-room>
+      <video class="room-video" autoplay muted loop playsinline preload="auto" poster="assets/images/research-chamber.png">
+        <source src="assets/videos/research-chamber.mp4" type="video/mp4" />
+      </video>
+      <div class="room-shade"></div>
+      <div class="research-board">
+        <p class="eyebrow">003 / ZAI RESEARCH</p>
+        <h2>Evidence, not content.</h2>
+        <div class="vault-grid">
+          <article><span>01</span><h3>PDF Library</h3><p>Technical briefs, frameworks, model notes.</p></article>
+          <article><span>02</span><h3>Tool Index</h3><p>Public demos and operational systems.</p></article>
+          <article><span>03</span><h3>Field Notes</h3><p>Signals, failures, revisions, experiments.</p></article>
+          <article><span>04</span><h3>ZAI Records</h3><p>The evolving logic behind the studio.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="future" class="room future" data-room>
+      <video class="room-video" autoplay muted loop playsinline preload="auto" poster="assets/images/exit-corridor.png">
+        <source src="assets/videos/exit-corridor.mp4" type="video/mp4" />
+      </video>
+      <div class="room-shade exit-shade"></div>
+      <div class="future-copy">
+        <p class="eyebrow">004 / FUTURE ROOMS</p>
+        <h2>The archive is intentionally unfinished.</h2>
+        <div class="future-tags">
+          <span>GitHub artifacts</span><span>Research PDFs</span><span>ZAI tools</span><span>Protected notes</span><span>Archive rooms</span>
+        </div>
+        <p class="closing">Until next time, human.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="src/main.js"></script>
+</body>
 </html>

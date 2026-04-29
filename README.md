@@ -1,60 +1,29 @@
-# Anteroom Studio
+# Anteroom — Cinematic Static Build
 
-A cinematic research and engineering studio website for Anteroom — founded by ZAI in 2019.
+No npm required.
 
 ## Run locally
+Open `index.html` directly in your browser.
 
+Better local preview:
 ```bash
-npm install
-npm run dev
+python -m http.server 5173
 ```
+Then open http://localhost:5173
 
-## Build for deployment
-
-```bash
-npm run build
-```
+## Deploy on GitHub Pages
+Upload everything in this folder to your repository root.
 
 ## Edit artifacts
+Open `src/main.js` and edit the `artifacts` array.
 
-All repository/archive items live here:
-
-```bash
-src/data/artifacts.js
-```
-
-Add or edit objects using this shape:
-
-```js
-{
-  id: '30',
-  name: 'New Tool Name',
-  category: 'ZAI Core',
-  status: 'Live artifact',
-  year: '2026',
-  repo: 'GitHub-Repo-Name',
-  description: 'Short description shown in the archive panel.',
-  line: 'Poetic one-line artifact statement.'
-}
-```
-
-The GitHub link is generated as:
-
-```txt
-https://github.com/zawwarsami16/<repo>
-```
-
-## Asset names
-
-```txt
-public/assets/images/hero-threshold.png
-public/assets/videos/hero-threshold.mp4
-public/assets/images/archive-field.png
-public/assets/videos/archive-field.mp4
-public/assets/images/research-chamber.png
-public/assets/videos/research-chamber.mp4
-public/assets/images/exit-corridor.png
-public/assets/videos/exit-corridor.mp4
-```
-
-Keep the same filenames if you replace assets later.
+## Replace assets
+Use the same file names:
+- assets/videos/hero-threshold.mp4
+- assets/videos/archive-field.mp4
+- assets/videos/research-chamber.mp4
+- assets/videos/exit-corridor.mp4
+- assets/images/hero-threshold.png
+- assets/images/archive-field.png
+- assets/images/research-chamber.png
+- assets/images/exit-corridor.png
