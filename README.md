@@ -1,6 +1,6 @@
-# Anteroom — Agency Cinematic Static Build
+# Anteroom Production Build
 
-A deploy-ready static website for Anteroom, the research and engineering studio founded by ZAI in 2019.
+A multi-page static cinematic website for Anteroom — a research and engineering studio founded by ZAI in 2019.
 
 ## Run locally
 
@@ -14,26 +14,37 @@ Open:
 http://localhost:5173
 ```
 
-## Deploy to GitHub Pages
+## Structure
 
-Upload everything inside this folder to your GitHub Pages repository root.
+```text
+index.html                 Threshold/home journey
+archive/index.html          Full artifact archive
+research/index.html         Research/PDF library concept
+studio/index.html           Private portfolio walkthrough
+future/index.html           Future rooms
+artifacts/*.html            Individual artifact pages
+src/css/base.css            Full design system
+src/js/core.js              Animation, cursor, reveals, parallax
+src/js/app.js               Home page data mounting
+src/data/artifacts.js       Main editable data file
+assets/images               Generated images
+assets/videos               Generated videos
+```
 
 ## Edit artifacts
 
-Open `src/main.js` and edit the `artifacts` array near the top.
-
-## Assets
-
-Videos live in:
+Most archive data lives in:
 
 ```text
-assets/videos/
+src/data/artifacts.js
 ```
 
-Images live in:
+For full static artifact pages, edit the matching file in:
 
 ```text
-assets/images/
+artifacts/
 ```
 
-Keep filenames stable if you want to replace assets without touching code.
+## Deploy to GitHub Pages
+
+Upload this folder contents to the repo root. No npm required.
