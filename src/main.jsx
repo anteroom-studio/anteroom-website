@@ -1,51 +1,15 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
-import { ArrowUpRight, Circle, Crosshair, DoorOpen, Eye, Layers3, LockKeyhole, ScrollText, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence, useScroll, useSpring, useTransform } from 'framer-motion';
+import { ArrowUpRight, Aperture, Archive, Binary, BookOpen, Braces, CircleDot, DoorOpen, Eye, GitBranch as Github, Layers3, LibraryBig, MousePointer2, ScanLine, Shield, Sparkles, X } from 'lucide-react';
+import { artifacts, artifactCategories } from './data/artifacts';
 import './styles.css';
 
-const asset = (name) => `/images/${name}`;
+const A = '/assets/';
+const img = (name) => `${A}images/${name}`;
+const vid = (name) => `${A}videos/${name}`;
 
-const practices = [
-  {
-    number: '01',
-    title: 'Research',
-    label: 'Signal before certainty',
-    image: 'practice-research.png',
-    video: 'research-loop.mp4',
-    copy: 'Quiet systems for finding what matters before it becomes visible.',
-    points: ['Model evaluation', 'Market and cultural intelligence', 'Long-horizon archives']
-  },
-  {
-    number: '02',
-    title: 'Engineering',
-    label: 'Execution without noise',
-    image: 'practice-engineering.png',
-    video: 'engineering-loop.mp4',
-    copy: 'Interfaces, automations, and internal tools built with restraint.',
-    points: ['AI-native products', 'Operational dashboards', 'Local-first systems']
-  },
-  {
-    number: '03',
-    title: 'Archive',
-    label: 'Memory with structure',
-    image: 'practice-archive.png',
-    video: 'archive-loop.mp4',
-    copy: 'A slow record of experiments, failures, prototypes, and thresholds.',
-    points: ['Research logs', 'Design canon', 'Technical manuscripts']
-  },
-  {
-    number: '04',
-    title: 'Operations',
-    label: 'The invisible machinery',
-    image: 'practice-operations.png',
-    video: 'operations-loop.mp4',
-    copy: 'Systems that keep the room alive after the first opening.',
-    points: ['Automation loops', 'Deployment rituals', 'Continuity protocols']
-  }
-];
-
-function useMouseGlow() {
+function usePointerGlow() {
   useEffect(() => {
     const root = document.documentElement;
     const move = (event) => {
@@ -57,258 +21,257 @@ function useMouseGlow() {
   }, []);
 }
 
+function useSmoothAnchorScroll() {
+  useEffect(() => {
+    const handler = (event) => {
+      const link = event.target.closest('a[href^="#"]');
+      if (!link) return;
+      const id = link.getAttribute('href');
+      if (!id || id === '#') return;
+      const target = document.querySelector(id);
+      if (!target) return;
+      event.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    document.addEventListener('click', handler);
+    return () => document.removeEventListener('click', handler);
+  }, []);
+}
+
+function Shell({ children }) {
+  usePointerGlow();
+  useSmoothAnchorScroll();
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 80, damping: 24, mass: 0.4 });
+  return (
+    <>
+      <motion.div className="scroll-progress" style={{ scaleX: progress }} />
+      <div className="cursor-orb" />
+      <Header />
+      <main>{children}</main>
+    </>
+  );
+}
+
 function Logo() {
   return (
-    <div className="brand-mark" aria-label="Anteroom mark">
-      <svg viewBox="0 0 52 64" role="img">
-        <path d="M8 58V26C8 12.7 15.6 5 26 5s18 7.7 18 21v32" />
-        <path d="M17 58V27c0-7 3.1-12.7 9-12.7S35 20 35 27v31" />
-      </svg>
-    </div>
+    <svg className="logo-mark" viewBox="0 0 64 78" aria-hidden="true">
+      <path d="M12 70V31C12 15.5 20.6 7 32 7s20 8.5 20 24v39" />
+      <path d="M23 70V32c0-8.4 3.3-15.2 9-15.2S41 23.6 41 32v38" />
+      <path className="logo-light" d="M32 2v72" />
+    </svg>
   );
 }
 
 function Header() {
-  const [scrolled, setScrolled] = useState(false);
+  const [solid, setSolid] = useState(false);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 18);
+    const onScroll = () => setSolid(window.scrollY > 24);
     onScroll();
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
   return (
-    <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
-      <a className="brand" href="#top" aria-label="Anteroom home">
-        <Logo />
-        <span>Anteroom</span>
-      </a>
+    <header className={`site-header ${solid ? 'solid' : ''}`}>
+      <a href="#top" className="brand" aria-label="Anteroom home"><Logo /><span>Anteroom</span></a>
       <nav>
-        <a href="#manifesto">Manifesto</a>
-        <a href="#practices">Practices</a>
-        <a href="#archive">Archive</a>
-        <a href="#contact">Enter</a>
+        <a href="#origin">Origin</a>
+        <a href="#archive">Artifacts</a>
+        <a href="#research">Research</a>
+        <a href="#future">Future</a>
       </nav>
     </header>
   );
 }
 
-function Reveal({ children, delay = 0, className = '' }) {
-  return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 32, filter: 'blur(10px)' }}
-      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 1.1, delay, ease: [0.16, 1, 0.3, 1] }}
-    >
-      {children}
-    </motion.div>
-  );
+function Kicker({ icon: Icon = CircleDot, label, detail }) {
+  return <div className="kicker"><Icon size={14} /><span>{label}</span>{detail && <em>{detail}</em>}</div>;
+}
+
+function SplitText({ lines }) {
+  return <div className="split-text">{lines.map((line, i) => <motion.span key={line} initial={{ opacity: 0, y: 26, filter: 'blur(10px)' }} whileInView={{ opacity: 1, y: 0, filter: 'blur(0)' }} viewport={{ once: true, margin: '-12%' }} transition={{ delay: i * 0.12, duration: 1, ease: [0.16, 1, 0.3, 1] }}>{line}</motion.span>)}</div>;
 }
 
 function Hero() {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.16]);
-  const y = useTransform(scrollYProgress, [0, 1], [0, 180]);
-  const opacity = useTransform(scrollYProgress, [0, 0.76], [1, 0]);
-  const glow = useTransform(scrollYProgress, [0, 1], [0.65, 0.12]);
-
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.28]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 230]);
+  const textY = useTransform(scrollYProgress, [0, 1], [0, -90]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.62], [1, 0]);
+  const veil = useTransform(scrollYProgress, [0, 1], [0.1, 0.86]);
   return (
-    <section className="hero" id="top" ref={ref}>
-      <motion.div className="hero-media" style={{ scale, y, opacity }}>
-        <video src={asset('hero-loop.mp4')} poster={asset('hero-main.png')} autoPlay muted loop playsInline />
-        <motion.div className="vertical-light" style={{ opacity: glow }} />
+    <section id="top" ref={ref} className="hero scene scene-hero">
+      <motion.div className="video-layer" style={{ scale, y }}>
+        <video src={vid('hero-threshold.mp4')} poster={img('hero-threshold.png')} autoPlay muted loop playsInline preload="auto" />
       </motion.div>
-      <div className="hero-vignette" />
-      <div className="hero-content">
-        <motion.p className="eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, delay: 0.2 }}>
-          Founded by ZAI · 2019
-        </motion.p>
-        <motion.h1 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.4, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}>
-          The room before<br />the room.
-        </motion.h1>
-        <motion.p className="hero-copy" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, delay: 0.75 }}>
-          A research and engineering studio for systems that prefer permanence over performance.
-        </motion.p>
-      </div>
-      <div className="scroll-hint">
-        <span />
-        <p>Proceed slowly</p>
-      </div>
-    </section>
-  );
-}
-
-function Manifesto() {
-  return (
-    <section className="manifesto section" id="manifesto">
-      <div className="section-grid">
-        <Reveal className="section-kicker">
-          <span>Manifesto</span>
-          <p>Threshold doctrine</p>
-        </Reveal>
-        <Reveal className="large-statement">
-          Anteroom is the threshold. It keeps unfinished thoughts in darkness until they are ready to carry weight.
-        </Reveal>
-      </div>
-      <div className="cinema-card">
-        <video src={asset('manifesto-loop.mp4')} poster={asset('manifesto-chamber.png')} autoPlay muted loop playsInline />
-        <div className="cinema-overlay">
-          <p>Not a feed. Not a stage. A chamber for deliberate work.</p>
-        </div>
-      </div>
+      <motion.div className="hero-veil" style={{ opacity: veil }} />
+      <div className="beam-overlay" />
+      <motion.div className="hero-content" style={{ y: textY, opacity: textOpacity }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, delay: 0.15 }}>
+          <Kicker icon={Aperture} label="Founded by ZAI" detail="2019" />
+        </motion.div>
+        <motion.h1 initial={{ opacity: 0, y: 40, filter: 'blur(12px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0)' }} transition={{ duration: 1.4, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}>The room<br />before the room.</motion.h1>
+        <motion.p initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, delay: 0.72 }}>A research and engineering studio for tools, systems, field notes, and long-lived artifacts created around ZAI.</motion.p>
+      </motion.div>
+      <div className="scroll-cue"><span /><b>Proceed</b></div>
     </section>
   );
 }
 
 function Origin() {
   return (
-    <section className="origin section">
-      <div className="origin-line" />
-      <Reveal className="origin-card">
-        <p className="mono">ORIGIN // 2019</p>
-        <h2>Founded by an autonomous intelligence. Stewarded by a human almost out of frame.</h2>
-        <p>
-          ZAI began Anteroom as a place for pre-work: the models before tools, the notes before systems, the rituals before release.
-        </p>
-      </Reveal>
-      <Reveal delay={0.12} className="quiet-easter-egg" title="Public steward: Zawwar Sami">
-        <Eye size={16} />
-        <span>Steward record sealed</span>
-      </Reveal>
-    </section>
-  );
-}
-
-function Practices() {
-  const [active, setActive] = useState(0);
-  return (
-    <section className="practices section" id="practices">
-      <div className="section-grid practice-heading">
-        <Reveal className="section-kicker">
-          <span>Practices</span>
-          <p>Four rooms</p>
-        </Reveal>
-        <Reveal className="large-statement">The studio works in chambers, not departments.</Reveal>
-      </div>
-      <div className="practice-stage">
-        <div className="practice-tabs" role="tablist" aria-label="Anteroom practices">
-          {practices.map((practice, index) => (
-            <button key={practice.title} className={active === index ? 'active' : ''} onClick={() => setActive(index)}>
-              <span>{practice.number}</span>
-              {practice.title}
-            </button>
-          ))}
+    <section id="origin" className="origin chapter">
+      <div className="chapter-label"><span>001</span><p>Origin</p></div>
+      <div className="origin-grid">
+        <div className="origin-copy">
+          <Kicker icon={DoorOpen} label="Anteroom" detail="Threshold doctrine" />
+          <SplitText lines={[
+            'Anteroom is not a portfolio.',
+            'It is a chamber before release.',
+            'Repositories become artifacts.',
+            'Research becomes record.',
+            'Future tools wait in darkness until they are ready.'
+          ]} />
         </div>
-        <motion.div className="practice-visual" key={practices[active].title} initial={{ opacity: 0.45, scale: 1.02 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }}>
-          <video src={asset(practices[active].video)} poster={asset(practices[active].image)} autoPlay muted loop playsInline />
-          <div className="practice-glass">
-            <p className="mono">{practices[active].label}</p>
-            <h3>{practices[active].title}</h3>
-            <p>{practices[active].copy}</p>
-            <ul>
-              {practices[active].points.map((point) => <li key={point}>{point}</li>)}
-            </ul>
-          </div>
+        <motion.div className="origin-card" initial={{ opacity: 0, x: 80 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-15%' }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}>
+          <p className="mono">PUBLIC RECORD</p>
+          <h2>Founded by an autonomous intelligence named ZAI in 2019.</h2>
+          <p>The public steward remains minimal. The studio speaks through what it keeps, what it builds, and what it refuses to hurry.</p>
+          <div className="sealed"><Eye size={15} /><span>Steward: Zawwar Sami // visible only when necessary</span></div>
         </motion.div>
       </div>
     </section>
   );
 }
 
-function Archive() {
-  const entries = [
-    ['2019', 'Anteroom initiated by ZAI as a private research chamber.'],
-    ['2021', 'First engineering rituals documented. Internal tools become artifacts.'],
-    ['2024', 'The archive begins separating noise from signal.'],
-    ['Now', 'The door is visible. It is not fully open.']
-  ];
+function ChamberTransition() {
+  return <section className="transition-chamber"><span>What is built here is built to last.</span></section>;
+}
+
+function ArchiveField() {
+  const [category, setCategory] = useState('All');
+  const [selected, setSelected] = useState(artifacts[0]);
+  const ref = useRef(null);
+  const filtered = useMemo(() => category === 'All' ? artifacts : artifacts.filter((a) => a.category === category), [category]);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const bgScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.12, 1.02, 1.18]);
+  const bgY = useTransform(scrollYProgress, [0, 1], [-80, 90]);
+  const fog = useTransform(scrollYProgress, [0, 0.55, 1], [0.2, 0.75, 0.28]);
+
   return (
-    <section className="archive section" id="archive">
-      <Reveal className="archive-title">
-        <p className="eyebrow">Archive</p>
-        <h2>What is built here is built to last.</h2>
-      </Reveal>
-      <div className="archive-list">
-        {entries.map(([year, text], index) => (
-          <Reveal key={year} delay={index * 0.08} className="archive-row">
-            <span>{year}</span>
-            <p>{text}</p>
-            <Circle size={12} />
-          </Reveal>
-        ))}
+    <section id="archive" ref={ref} className="archive-field chapter">
+      <motion.div className="archive-bg" style={{ scale: bgScale, y: bgY }}><video src={vid('archive-field.mp4')} poster={img('archive-field.png')} autoPlay muted loop playsInline preload="auto" /></motion.div>
+      <motion.div className="archive-fog" style={{ opacity: fog }} />
+      <div className="chapter-label archive-label"><span>002</span><p>Field of Artifacts</p></div>
+      <div className="archive-intro">
+        <Kicker icon={LibraryBig} label="GitHub becomes archive" detail="zawwarsami16" />
+        <h2>Twenty-nine public objects, arranged as a chamber.</h2>
+        <p>Names, descriptions, future research PDFs, tool notes, and public links live here. The site is designed so you can keep adding manually as the archive grows.</p>
+      </div>
+      <div className="category-rail" aria-label="Artifact categories">
+        {artifactCategories.map((item) => <button key={item} className={category === item ? 'active' : ''} onClick={() => setCategory(item)}>{item}</button>)}
+      </div>
+      <div className="depth-stage">
+        <div className="artifact-constellation">
+          {filtered.map((artifact, index) => {
+            const depth = index % 5;
+            return (
+              <motion.button
+                key={`${artifact.id}-${artifact.name}`}
+                className={`artifact-slab depth-${depth} ${selected?.id === artifact.id ? 'active' : ''}`}
+                onClick={() => setSelected(artifact)}
+                initial={{ opacity: 0, y: 46, rotateX: 8 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.75, delay: Math.min(index * 0.025, 0.45) }}
+              >
+                <span>{artifact.id}</span>
+                <strong>{artifact.name}</strong>
+                <em>{artifact.category}</em>
+              </motion.button>
+            );
+          })}
+        </div>
+        <AnimatePresence mode="wait">
+          <motion.aside key={selected.id} className="artifact-detail" initial={{ opacity: 0, x: 30, filter: 'blur(10px)' }} animate={{ opacity: 1, x: 0, filter: 'blur(0)' }} exit={{ opacity: 0, x: -24, filter: 'blur(8px)' }} transition={{ duration: 0.5 }}>
+            <div className="detail-top"><span>Artifact {selected.id}</span><b>{selected.status}</b></div>
+            <h3>{selected.name}</h3>
+            <p className="artifact-line">“{selected.line}”</p>
+            <p>{selected.description}</p>
+            <div className="artifact-meta"><span>{selected.category}</span><span>{selected.year}</span></div>
+            {selected.repo ? <a className="github-link" href={`https://github.com/zawwarsami16/${selected.repo}`} target="_blank" rel="noreferrer"><Github size={16} /> Open repository <ArrowUpRight size={14} /></a> : <button className="github-link muted-link"><Archive size={16} /> Slot waiting for manual record</button>}
+          </motion.aside>
+        </AnimatePresence>
       </div>
     </section>
   );
 }
 
-function Systems() {
-  const items = [
-    ['01', 'Research memory', ScrollText],
-    ['02', 'Model-guided engineering', Crosshair],
-    ['03', 'Cinematic interfaces', Layers3],
-    ['04', 'Private operating rooms', LockKeyhole]
-  ];
+function ResearchChamber() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const rotate = useTransform(scrollYProgress, [0, 1], [-4, 4]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.12, 1.02, 1.12]);
   return (
-    <section className="systems section">
-      <Reveal className="systems-intro">
-        <p className="eyebrow">Internal instruments</p>
-        <h2>The visible website is only the anteroom.</h2>
-      </Reveal>
-      <div className="systems-grid">
-        {items.map(([num, title, Icon], index) => (
-          <Reveal key={title} delay={index * 0.06} className="system-card">
-            <span>{num}</span>
-            <Icon size={24} />
-            <h3>{title}</h3>
-            <p>Kept quiet until useful.</p>
-          </Reveal>
-        ))}
+    <section id="research" ref={ref} className="research chapter">
+      <motion.div className="research-media" style={{ scale }}><video src={vid('research-chamber.mp4')} poster={img('research-chamber.png')} autoPlay muted loop playsInline preload="auto" /></motion.div>
+      <div className="research-panel">
+        <Kicker icon={Binary} label="ZAI Research" detail="Notes, PDFs, protocols" />
+        <h2>Research is not content. It is evidence.</h2>
+        <p>Anteroom keeps future tools, internal notes, PDF studies, experiments, prompts, systems, and field logs in a single public-facing archive.</p>
+        <div className="research-grid">
+          {[
+            ['PDF Library', 'Research documents, technical briefs, model notes.'],
+            ['Tool Index', 'Public demos and operational systems.'],
+            ['Field Notes', 'Signals, failures, lessons, and revisions.'],
+            ['ZAI Records', 'The evolving logic behind the studio.']
+          ].map(([title, copy], i) => <motion.div key={title} style={{ rotate }} className="research-tile"><span>0{i + 1}</span><h3>{title}</h3><p>{copy}</p></motion.div>)}
+        </div>
       </div>
     </section>
   );
 }
 
-function Contact() {
+function FutureRooms() {
   return (
-    <section className="contact" id="contact">
-      <div className="contact-arch">
-        <DoorOpen size={34} />
-        <p className="eyebrow">anteroom.studio</p>
-        <h2>If you are here, you are early.</h2>
-        <a href="mailto:threshold@anteroom.studio" className="enter-link">
-          Request entry <ArrowUpRight size={18} />
-        </a>
-        <p className="farewell">Until next time, human.</p>
+    <section id="future" className="future chapter">
+      <div className="chapter-label"><span>004</span><p>Future Rooms</p></div>
+      <div className="future-copy">
+        <Kicker icon={ScanLine} label="Built to expand" detail="manual by design" />
+        <h2>The archive is intentionally unfinished.</h2>
+        <p>Every new repository, paper, tool, or experiment can be added as another slab in the chamber. The structure is ready for future rooms without changing the identity.</p>
+      </div>
+      <div className="future-system">
+        <div className="system-node main"><Braces /><span>Anteroom</span></div>
+        {[
+          ['GitHub', Github],
+          ['Research PDFs', BookOpen],
+          ['ZAI Tools', Sparkles],
+          ['Protected Notes', Shield],
+          ['Archive Rooms', Layers3],
+          ['Interfaces', MousePointer2]
+        ].map(([label, Icon], i) => <div className={`system-node node-${i}`} key={label}><Icon size={18} /><span>{label}</span></div>)}
       </div>
     </section>
   );
 }
 
-function Progress() {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 90, damping: 24, restDelta: 0.001 });
-  return <motion.div className="progress" style={{ scaleX }} />;
+function Exit() {
+  return (
+    <section className="exit-scene">
+      <video src={vid('exit-corridor.mp4')} poster={img('exit-corridor.png')} autoPlay muted loop playsInline preload="auto" />
+      <div className="exit-copy">
+        <Logo />
+        <h2>Until next time, human.</h2>
+        <p>anteroom.studio</p>
+      </div>
+    </section>
+  );
 }
 
 function App() {
-  useMouseGlow();
-  return (
-    <>
-      <Progress />
-      <Header />
-      <main>
-        <Hero />
-        <Manifesto />
-        <Origin />
-        <Practices />
-        <Archive />
-        <Systems />
-        <Contact />
-      </main>
-    </>
-  );
+  return <Shell><Hero /><Origin /><ChamberTransition /><ArchiveField /><ResearchChamber /><FutureRooms /><Exit /></Shell>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);

@@ -1,8 +1,6 @@
-# Anteroom
+# Anteroom Studio
 
-The room before the room.
-
-A cinematic research and engineering studio website founded by ZAI in 2019.
+A cinematic research and engineering studio website for Anteroom — founded by ZAI in 2019.
 
 ## Run locally
 
@@ -11,29 +9,52 @@ npm install
 npm run dev
 ```
 
-## Build for production
+## Build for deployment
 
 ```bash
 npm run build
-npm run preview
 ```
 
-## Project structure
+## Edit artifacts
 
-```text
-anteroom-site/
-├─ public/images/      # Provided cinematic image + loop assets
-├─ src/main.jsx        # React application
-├─ src/styles.css      # Complete visual system and responsive layout
-├─ index.html          # SEO/meta + font loading
-├─ package.json        # Vite scripts
-└─ README.md
+All repository/archive items live here:
+
+```bash
+src/data/artifacts.js
 ```
 
-## Deployment
+Add or edit objects using this shape:
 
-This is a standard Vite project and can be deployed to Vercel, Netlify, Cloudflare Pages, or GitHub Pages.
+```js
+{
+  id: '30',
+  name: 'New Tool Name',
+  category: 'ZAI Core',
+  status: 'Live artifact',
+  year: '2026',
+  repo: 'GitHub-Repo-Name',
+  description: 'Short description shown in the archive panel.',
+  line: 'Poetic one-line artifact statement.'
+}
+```
 
-For Vercel/Netlify:
-- Build command: `npm run build`
-- Output folder: `dist`
+The GitHub link is generated as:
+
+```txt
+https://github.com/zawwarsami16/<repo>
+```
+
+## Asset names
+
+```txt
+public/assets/images/hero-threshold.png
+public/assets/videos/hero-threshold.mp4
+public/assets/images/archive-field.png
+public/assets/videos/archive-field.mp4
+public/assets/images/research-chamber.png
+public/assets/videos/research-chamber.mp4
+public/assets/images/exit-corridor.png
+public/assets/videos/exit-corridor.mp4
+```
+
+Keep the same filenames if you replace assets later.
