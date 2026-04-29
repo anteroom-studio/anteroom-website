@@ -1,13 +1,13 @@
-import Image from "next/image";
 import Link from "next/link";
-import { asset } from "@/lib/asset";
+import EditorialMedia from "./EditorialMedia";
 
 type Props = {
   index: string;
   eyebrow: string;
   title: React.ReactNode;
   body: string;
-  image: string;
+  poster: string;
+  video?: string;
   href: string;
   cta: string;
   align?: "left" | "right";
@@ -19,18 +19,20 @@ export default function EditorialSection({
   eyebrow,
   title,
   body,
-  image,
+  poster,
+  video,
   href,
   cta,
   align = "left",
   id,
 }: Props) {
   const imageRight = align === "left";
+  const titleId = `${id ?? eyebrow.toLowerCase()}-title`;
 
   return (
     <section
       id={id}
-      aria-labelledby={`${id ?? eyebrow.toLowerCase()}-title`}
+      aria-labelledby={titleId}
       className="relative border-t border-[--color-line] py-24 lg:py-40 px-6 lg:px-12"
     >
       <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-y-12 lg:gap-x-16 items-center">
@@ -44,10 +46,7 @@ export default function EditorialSection({
             <span className="label text-[--color-faint]">{eyebrow}</span>
           </div>
 
-          <h2
-            id={`${id ?? eyebrow.toLowerCase()}-title`}
-            className="h1 text-[--color-fg] max-w-[14ch]"
-          >
+          <h2 id={titleId} className="h1 text-[--color-fg] max-w-[14ch]">
             {title}
           </h2>
 
@@ -77,23 +76,7 @@ export default function EditorialSection({
             imageRight ? "lg:order-2" : "lg:order-1"
           }`}
         >
-          <Image
-            src={asset(image)}
-            alt=""
-            aria-hidden
-            fill
-            sizes="(min-width: 1024px) 60vw, 100vw"
-            className="object-cover object-center transition-transform duration-[1200ms] group-hover:scale-[1.04]"
-            style={{ transitionTimingFunction: "var(--ease-out)" }}
-          />
-          <div
-            aria-hidden
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(180deg, transparent 0%, transparent 60%, rgba(10,9,8,0.55) 100%)",
-            }}
-          />
+          <EditorialMedia poster={poster} video={video} />
           <div className="absolute bottom-6 left-6 right-6 flex items-baseline justify-between text-[--color-fg] opacity-0 group-hover:opacity-100 transition-opacity duration-500">
             <span className="label">{eyebrow}</span>
             <span className="label-sm">View →</span>

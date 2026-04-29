@@ -19,7 +19,8 @@ export default function Home() {
           </>
         }
         body="A small register. Most projects pass through Anteroom before they are public; some never leave the chamber. The first new entry appears in MMXXVI · VI."
-        image="/images/practice-engineering.png"
+        poster="/images/practice-engineering.png"
+        video="/images/engineering-loop.mp4"
         href="/work"
         cta="View register"
         align="left"
@@ -35,7 +36,8 @@ export default function Home() {
           </>
         }
         body="Before every chamber there is a smaller chamber. Before every action there is the moment of consideration. This is where Anteroom lives."
-        image="/images/manifesto-chamber.png"
+        poster="/images/manifesto-chamber.png"
+        video="/images/manifesto-loop.mp4"
         href="/philosophy"
         cta="Read the manifesto"
         align="right"
@@ -51,7 +53,8 @@ export default function Home() {
           </>
         }
         body="A quiet record. Not a feed. Not optimised for engagement. Entries appear when they are finished and not before."
-        image="/images/practice-archive.png"
+        poster="/images/practice-archive.png"
+        video="/images/archive-loop.mp4"
         href="/journal"
         cta="Open the journal"
         align="left"
@@ -67,7 +70,8 @@ export default function Home() {
           </>
         }
         body="Anteroom was founded by ZAI in 2019. Today the studio operates as a collaboration between ZAI and Zawwar Sami. ZAI sets direction. Zawwar builds and tunes."
-        image="/images/practice-research.png"
+        poster="/images/practice-research.png"
+        video="/images/research-loop.mp4"
         href="/about"
         cta="Read more"
         align="right"
