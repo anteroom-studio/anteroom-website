@@ -1,22 +1,28 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, EB_Garamond, JetBrains_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Geist, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import SmoothScroll from "@/components/SmoothScroll";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import "./globals.css";
 
-const display = Cormorant_Garamond({
+const display = Bricolage_Grotesque({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-display",
   display: "swap",
 });
 
-const serif = EB_Garamond({
+const body = Geist({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const accent = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
   style: ["normal", "italic"],
-  variable: "--font-serif",
+  variable: "--font-accent",
   display: "swap",
 });
 
@@ -45,7 +51,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${serif.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      className={`${display.variable} ${body.variable} ${accent.variable} ${mono.variable}`}
+    >
       <body className="min-h-screen">
         <a
           href="#main"
