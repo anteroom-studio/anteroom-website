@@ -1,63 +1,121 @@
 const artifacts = [
-  ['01','ZAI Crypto Terminal','Market system observing depth before action.'],
-  ['02','ZAI Oracle','Macro, crisis replay, and regime intelligence.'],
-  ['03','Restaurant Dashboard','Operational intelligence for branch-level stock.'],
-  ['04','ZAI Genesis','Foundational systems and memory architecture.'],
-  ['05','World Model','A research map for events and consequence.'],
-  ['06','Data Model V2','Long-horizon datasets and structured signals.'],
-  ['07','Conscious Diary','Private machine memory and reflection.'],
-  ['08','OSINT Kali','A curated installer for open-source intelligence.'],
-  ['09','CommonGround','Event discovery and social extraction system.'],
-  ['10','Kajun Digital Presence','A public restaurant interface experiment.'],
-  ['11','Hakka Nation','Menu intelligence and brand interface study.'],
-  ['12','Reserved Room','Future tool, paper, or artifact.']
+  {name:'ZAI Crypto Terminal', cat:'Market Systems', year:'2026', desc:'A futures-first intelligence instrument for order-book imbalance, depth discipline, and local reasoning.', url:'https://github.com/zawwarsami16/ZAI-Crypto-Terminal'},
+  {name:'ZAI Oracle', cat:'Market Systems', year:'2026', desc:'A macro, geopolitical, and market intelligence terminal built around signal quality and scenario awareness.', url:'https://github.com/zawwarsami16/zai-oracle'},
+  {name:'ZAI Restaurant Dashboard', cat:'Restaurant Intelligence', year:'2026', desc:'A multi-location restaurant intelligence system for stock, sales, EOD reporting, and branch operations.', url:'https://github.com/zawwarsami16/zai-restaurant-dashboard'},
+  {name:'ZAI Genesis', cat:'ZAI Core', year:'2026', desc:'A foundation layer for the wider ZAI ecosystem and its evolving internal architecture.', url:'https://github.com/zawwarsami16/ZAI-Genesis'},
+  {name:'ZAI World Model', cat:'Research Library', year:'2026', desc:'A research direction for modeling events, markets, systems, and long-range consequences.', url:'https://github.com/zawwarsami16/ZAI-World-Model'},
+  {name:'ZAI Data Model V2', cat:'Research Library', year:'2026', desc:'A structured data and intelligence layer for future analysis, research, and machine memory.', url:'https://github.com/zawwarsami16/ZAI-Data-Model-V2'},
+  {name:'Zai Conscious Diary', cat:'ZAI Core', year:'2026', desc:'A diary-like memory and reflection system for consciousness-oriented AI experiments.', url:'https://github.com/zawwarsami16/Zai-ConsciousDiary'},
+  {name:'Zai OSINT Kali', cat:'OSINT', year:'2026', desc:'A Kali-oriented OSINT toolkit installer and operator workspace for ethical intelligence gathering.', url:'https://github.com/zawwarsami16/Zai-Osint-Kali'},
+  {name:'CommonGround', cat:'Web Experiments', year:'2026', desc:'An event discovery and aggregation concept designed around cultural intelligence and local discovery.', url:'https://github.com/zawwarsami16/CommonGround'},
+  {name:'Kajun Chicken & Seafood', cat:'Restaurant Intelligence', year:'2026', desc:'A public-facing restaurant interface with AI menu logic, cloud menu editing, and local business presence.', url:'https://github.com/zawwarsami16/Kajun-chicken-and-seafood'},
+  {name:'Hakka Nation', cat:'Restaurant Intelligence', year:'2026', desc:'A restaurant web experience exploring interactive menu, brand atmosphere, and digital storefront design.', url:'https://github.com/zawwarsami16/hakka-nation'},
+  {name:'Portfolio Interface', cat:'Web Experiments', year:'2026', desc:'A personal interface experiment that can later be folded into Anteroom as a private walkthrough room.', url:'https://github.com/zawwarsami16'},
+  ...Array.from({length:17},(_,i)=>({name:`Reserved Artifact ${String(i+13).padStart(2,'0')}`,cat:['ZAI Core','Market Systems','Automation','Research Library','Web Experiments'][i%5],year:'Future',desc:'A reserved chamber for a future repository, PDF, tool, experiment, or private portfolio record.',url:'https://github.com/zawwarsami16'}))
 ];
-const cloud = document.getElementById('artifactCloud');
-const panel = document.getElementById('artifactPanel');
-const positions = [
-  ['60vw','17vh','-12deg','4deg'], ['75vw','36vh','10deg','-3deg'], ['46vw','52vh','-7deg','2deg'], ['23vw','45vh','13deg','-5deg'],
-  ['8vw','23vh','-8deg','4deg'], ['62vw','70vh','5deg','2deg'], ['33vw','72vh','-14deg','0deg'], ['82vw','66vh','12deg','-4deg'],
-  ['16vw','68vh','6deg','4deg'], ['41vw','28vh','-5deg','-3deg'], ['70vw','12vh','7deg','2deg'], ['5vw','51vh','-9deg','-2deg']
-];
-artifacts.forEach((a,i)=>{
-  const el=document.createElement('button'); el.className='artifact'; el.type='button';
-  const p=positions[i%positions.length];
-  el.style.setProperty('--x', p[0]); el.style.setProperty('--y', p[1]); el.style.setProperty('--ry', p[2]); el.style.setProperty('--rx', p[3]);
-  el.innerHTML=`<span class="num">ARTIFACT ${a[0]}</span><h4>${a[1]}</h4><p>${a[2]}</p>`;
-  el.addEventListener('click',()=>{
-    panel.innerHTML=`<span class="panel-kicker">Artifact ${a[0]}</span><h3>${a[1]}</h3><p>${a[2]} This slot can hold GitHub links, images, PDFs, notes, and future release logs.</p><a href="https://github.com/zawwarsami16" target="_blank" rel="noreferrer">Open GitHub</a>`;
-  });
-  cloud.appendChild(el);
+
+const $ = (s, root=document) => root.querySelector(s);
+const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+
+const meter = $('.scroll-meter span');
+const cursor = $('.cursor');
+window.addEventListener('scroll', () => {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  meter.style.width = `${(scrollY / max) * 100}%`;
+  updateActiveRail();
+  parallaxHero();
 });
 
-const glow=document.getElementById('cursorGlow');
-window.addEventListener('pointermove', e=>{
-  glow.style.left=e.clientX+'px'; glow.style.top=e.clientY+'px';
-  document.documentElement.style.setProperty('--mx', e.clientX/window.innerWidth-.5);
-  document.documentElement.style.setProperty('--my', e.clientY/window.innerHeight-.5);
+window.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+$$('a,button,.artifact-card,.walk-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cursor.classList.add('active'));
+  el.addEventListener('mouseleave',()=>cursor.classList.remove('active'));
 });
 
-const observer=new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){
-      document.querySelectorAll('.room').forEach(r=>r.classList.remove('active'));
-      entry.target.classList.add('active');
-      const v=entry.target.querySelector('video');
-      if(v){ v.play().catch(()=>{}); }
-    }
+const io = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting) entry.target.classList.add('visible');
   });
-},{threshold:.55});
-document.querySelectorAll('[data-room]').forEach(r=>observer.observe(r));
+},{threshold:.18});
+$$('.reveal,.kinetic-line').forEach(el=>io.observe(el));
 
-let raf=false;
-window.addEventListener('scroll',()=>{
-  if(raf) return; raf=true;
-  requestAnimationFrame(()=>{
-    const y=window.scrollY;
-    document.querySelectorAll('.artifact').forEach((el,i)=>{
-      const drift = Math.sin((y/320)+(i*.8))*8;
-      el.style.marginTop = drift+'px';
-    });
-    raf=false;
+const railLinks = $$('.chapter-rail a');
+function updateActiveRail(){
+  let current = '';
+  $$('section[id]').forEach(sec=>{
+    const top = sec.getBoundingClientRect().top;
+    if(top < innerHeight*.45) current = sec.id;
   });
+  railLinks.forEach(a=>a.classList.toggle('active', a.getAttribute('href') === `#${current}`));
+}
+function parallaxHero(){
+  const hero = $('#threshold');
+  const y = Math.min(1, scrollY / innerHeight);
+  hero.style.setProperty('--drift', y);
+  const video = $('.hero .bg-video');
+  if(video) video.style.transform = `scale(${1 + y*.08}) translateY(${y*42}px)`;
+}
+
+$$('[data-tilt]').forEach(card=>{
+  card.addEventListener('mousemove', e=>{
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX-r.left)/r.width; const y = (e.clientY-r.top)/r.height;
+    card.style.setProperty('--mx', `${x*100}%`); card.style.setProperty('--my', `${y*100}%`);
+    card.style.transform = `rotateX(${(0.5-y)*5}deg) rotateY(${(x-0.5)*7}deg) translateY(-4px)`;
+  });
+  card.addEventListener('mouseleave',()=> card.style.transform='');
 });
+
+const cats = ['All', ...new Set(artifacts.map(a=>a.cat))];
+let activeCat = 'All';
+const filterRow = $('#filterRow');
+const list = $('#artifactList');
+const preview = $('#artifactPreview');
+const modal = $('#artifactModal');
+
+function renderFilters(){
+  filterRow.innerHTML = cats.map(c=>`<button class="${c===activeCat?'active':''}" data-cat="${c}">${c}</button>`).join('');
+  $$('button', filterRow).forEach(btn=>btn.onclick=()=>{activeCat=btn.dataset.cat; renderFilters(); renderArtifacts();});
+}
+function renderArtifacts(){
+  const items = activeCat==='All' ? artifacts : artifacts.filter(a=>a.cat===activeCat);
+  list.innerHTML = items.map((a,i)=>`
+    <article class="artifact-card" data-index="${artifacts.indexOf(a)}" style="animation-delay:${i*28}ms">
+      <div class="artifact-no">Artifact ${String(artifacts.indexOf(a)+1).padStart(2,'0')} · ${a.year}</div>
+      <h3>${a.name}</h3>
+      <p>${a.desc}</p>
+      <span class="artifact-cat">${a.cat}</span>
+    </article>`).join('');
+  $$('.artifact-card', list).forEach(card=>{
+    card.addEventListener('mouseenter',()=>setPreview(+card.dataset.index));
+    card.addEventListener('focus',()=>setPreview(+card.dataset.index));
+    card.addEventListener('click',()=>openModal(+card.dataset.index));
+  });
+  if(items.length) setPreview(artifacts.indexOf(items[0]));
+}
+function setPreview(i){
+  const a = artifacts[i];
+  preview.innerHTML = `<p class="eyebrow">Artifact ${String(i+1).padStart(2,'0')} · ${a.cat}</p><h3>${a.name}</h3><p>${a.desc}</p><a class="button primary" href="${a.url}" target="_blank" rel="noreferrer">Open repository</a>`;
+}
+function openModal(i){
+  const a = artifacts[i];
+  $('#modalCategory').textContent = `Artifact ${String(i+1).padStart(2,'0')} · ${a.cat}`;
+  $('#modalTitle').textContent = a.name;
+  $('#modalDescription').textContent = a.desc;
+  $('#modalLink').href = a.url;
+  modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+}
+$$('[data-close]').forEach(btn=>btn.addEventListener('click',()=>{modal.classList.remove('open'); modal.setAttribute('aria-hidden','true');}));
+window.addEventListener('keydown', e=>{if(e.key==='Escape') modal.classList.remove('open')});
+
+function ensureVideoPlayback(){
+  $$('video').forEach(v=>{
+    v.muted = true; v.playsInline = true; v.autoplay = true; v.loop = true;
+    const p = v.play();
+    if(p && p.catch) p.catch(()=>document.body.classList.add('video-blocked'));
+  });
+}
+renderFilters(); renderArtifacts(); updateActiveRail(); ensureVideoPlayback();

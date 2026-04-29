@@ -1,29 +1,39 @@
-# Anteroom — Cinematic Static Build
+# Anteroom — Agency Cinematic Static Build
 
-No npm required.
+A deploy-ready static website for Anteroom, the research and engineering studio founded by ZAI in 2019.
 
 ## Run locally
-Open `index.html` directly in your browser.
 
-Better local preview:
-```bash
+```powershell
 python -m http.server 5173
 ```
-Then open http://localhost:5173
 
-## Deploy on GitHub Pages
-Upload everything in this folder to your repository root.
+Open:
+
+```text
+http://localhost:5173
+```
+
+## Deploy to GitHub Pages
+
+Upload everything inside this folder to your GitHub Pages repository root.
 
 ## Edit artifacts
-Open `src/main.js` and edit the `artifacts` array.
 
-## Replace assets
-Use the same file names:
-- assets/videos/hero-threshold.mp4
-- assets/videos/archive-field.mp4
-- assets/videos/research-chamber.mp4
-- assets/videos/exit-corridor.mp4
-- assets/images/hero-threshold.png
-- assets/images/archive-field.png
-- assets/images/research-chamber.png
-- assets/images/exit-corridor.png
+Open `src/main.js` and edit the `artifacts` array near the top.
+
+## Assets
+
+Videos live in:
+
+```text
+assets/videos/
+```
+
+Images live in:
+
+```text
+assets/images/
+```
+
+Keep filenames stable if you want to replace assets without touching code.
