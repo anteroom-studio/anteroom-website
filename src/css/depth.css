@@ -1,4 +1,34 @@
-/* Phase 4 depth layer */
-body{background:#030302}
-.scene-video{filter:brightness(.54) contrast(1.24) saturate(.82)}
-.btn:hover{box-shadow:0 0 46px rgba(201,169,97,.14)}
+/* ===== PHASE 4 — DEPTH SYSTEM ===== */
+
+.pov::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  z-index:32;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at var(--mx,50%) var(--my,50%),
+      rgba(0,0,0,0) 0 18%,
+      rgba(0,0,0,.38) 38%,
+      rgba(0,0,0,.88) 100%
+    );
+}
+
+.scene-video{
+  filter: brightness(.54) contrast(1.24) saturate(.82);
+}
+
+.room-copy .kicker,
+.room-copy h1,
+.room-copy p,
+.room-actions{
+  opacity:0;
+  transform:translateY(10px);
+  filter:blur(6px);
+  transition: all .7s cubic-bezier(.16,1,.3,1);
+}
+
+.room-copy.show .kicker{opacity:1;transform:none;filter:blur(0);transition-delay:.15s}
+.room-copy.show h1{opacity:1;transform:none;filter:blur(0);transition-delay:.35s}
+.room-copy.show p{opacity:1;transform:none;filter:blur(0);transition-delay:.55s}
+.room-copy.show .room-actions{opacity:1;transform:none;filter:blur(0);transition-delay:.75s}
