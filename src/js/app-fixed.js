@@ -3,6 +3,22 @@ import { rooms, archiveSlabs } from '../data/rooms.js';
 const root=document.getElementById('pov');
 const loading=document.getElementById('loading');
 
+// ===== PRESENCE SYSTEM =====
+let presence = 0;
+let lastMoveTime = Date.now();
+
+document.addEventListener('mousemove', () => {
+  presence = 1;
+  lastMoveTime = Date.now();
+});
+
+setInterval(() => {
+  if (Date.now() - lastMoveTime > 1500) {
+    presence *= 0.97;
+  }
+  document.body.style.setProperty('--presence', presence);
+}, 60);
+
 function makeVideo(){
   const v=document.createElement('video');
   v.className='scene-video';
@@ -97,7 +113,15 @@ function renderSlabs(show){
   if(!show){slabLayer.classList.remove('show');return;}
   slabLayer.innerHTML=archiveSlabs.map((s,i)=>'<button class="artifact-slab slab-'+i+'" data-i="'+i+'"><b>'+s.id+'</b><strong>'+s.title+'</strong><small>'+s.type+' / '+s.state+'</small></button>').join('');
   requestAnimationFrame(()=>slabLayer.classList.add('show'));
-  slabLayer.querySelectorAll('.artifact-slab').forEach(el=>{el.onclick=e=>{e.stopPropagation();if(inspecting)return;inspecting=true;slabLayer.classList.add('inspecting');el.classList.add('active');};});
+  slabLayer.querySelectorAll('.artifact-slab').forEach(el=>{el.onclick = e => {
+  e.stopPropagation();
+
+  const i = el.dataset.i;
+
+  if (archiveSlabs[i]) {
+    openDeepDive(archiveSlabs[i]);
+  }
+};e.stopPropagation();if(inspecting)return;inspecting=true;slabLayer.classList.add('inspecting');el.classList.add('active');};});
 }
 addEventListener('click',()=>{if(inspecting)closeInspection();});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&inspecting)closeInspection();});
@@ -158,3 +182,45 @@ back.addEventListener('ended',()=>{back.currentTime=0;keepVideoAlive(back);});
 back.addEventListener('error',()=>{});
 
 addEventListener('load',()=>{setTimeout(()=>{loading.classList.add('hide');prepareVideo(front,rooms[0],true);updateUI(rooms[0]);},700);});
+
+// ===== DEEP DIVE SYSTEM =====
+const deepDive = document.createElement('div');
+deepDive.id = 'deepDive';
+
+deepDive.style.cssText = `
+position:fixed;
+inset:0;
+z-index:200;
+display:flex;
+align-items:center;
+justify-content:center;
+background:rgba(0,0,0,0.92);
+opacity:0;
+pointer-events:none;
+transition:opacity 0.6s ease;
+color:#e8e1d4;
+padding:40px;
+`;
+
+document.body.appendChild(deepDive);
+
+function openDeepDive(data){
+  deepDive.innerHTML = `
+    <div style="max-width:700px">
+      <div style="color:#c9a961;font-size:11px;letter-spacing:0.25em">${data.id}</div>
+      <h1 style="font-size:52px;font-family:serif;margin:10px 0">${data.title}</h1>
+      <p style="opacity:0.6;margin-bottom:16px">${data.signal || ''}</p>
+      <p style="line-height:1.7">${data.desc}</p>
+      <div style="margin-top:28px;color:#c9a961">→ ${data.command || 'Access record'}</div>
+    </div>
+  `;
+  deepDive.style.opacity = '1';
+  deepDive.style.pointerEvents = 'auto';
+}
+
+function closeDeepDive(){
+  deepDive.style.opacity = '0';
+  deepDive.style.pointerEvents = 'none';
+}
+
+deepDive.addEventListener('click', closeDeepDive);
