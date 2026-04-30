@@ -37,3 +37,38 @@ body.archive-mode .room-note{opacity:.58}
 .slab-layer .artifact-slab:hover{opacity:1;filter:blur(0);border-color:rgba(244,228,184,.72);background:linear-gradient(180deg,rgba(34,28,18,.8),rgba(8,7,5,.62));transform:scale(1.08);box-shadow:0 0 80px rgba(201,169,97,.14),0 55px 150px rgba(0,0,0,.58)}
 .slab-layer.inspecting .artifact-slab{opacity:0;filter:blur(8px);pointer-events:none}.slab-layer.inspecting .artifact-slab.active{opacity:1;filter:blur(0);left:50%;top:50%;width:min(560px,82vw);min-height:300px;transform:translate(-50%,-50%) scale(1.12);z-index:5;pointer-events:auto}.slab-layer.inspecting .artifact-slab.active strong{font-size:56px}.slab-layer.inspecting .artifact-slab.active small{display:block;margin-top:38px}
 @media(max-width:760px){body.archive-mode .hud{padding:82px 18px 0}body.archive-mode .room-copy{width:88vw}body.archive-mode .room-copy p{width:82vw}.artifact-slab{width:220px}.slab-0,.slab-1,.slab-2,.slab-3,.slab-4,.slab-5{left:50%;top:52%;transform:translate(-50%,-50%)}}
+
+
+/* ===== FINAL ARCHIVE LAYOUT ===== */
+
+body.archive-mode .hud {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  align-items: start;
+  padding: 80px 40px;
+}
+
+/* LEFT PANEL */
+body.archive-mode .room-copy {
+  max-width: 380px;
+}
+
+body.archive-mode .room-copy h1 {
+  font-size: 42px;
+  line-height: 1;
+}
+
+body.archive-mode .room-copy p {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+body.archive-mode .room-actions {
+  display: none;
+}
+
+/* RIGHT SPACE */
+body.archive-mode .slab-layer {
+  left: 420px;
+  width: calc(100% - 420px);
+}
