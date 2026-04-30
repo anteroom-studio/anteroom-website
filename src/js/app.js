@@ -70,6 +70,24 @@ let busy = false;
 let inspecting = false;
 let lastMove = Date.now();
 
+let targetX = window.innerWidth / 2;
+let targetY = window.innerHeight / 2;
+let currentX = targetX;
+let currentY = targetY;
+
+function smoothLight(){
+  currentX += (targetX - currentX) * 0.12;
+  currentY += (targetY - currentY) * 0.12;
+
+  document.body.style.setProperty('--mx', currentX + 'px');
+  document.body.style.setProperty('--my', currentY + 'px');
+
+  requestAnimationFrame(smoothLight);
+}
+
+smoothLight();
+
+
 const travelMap = {
   'corridor:archive': 'assets/videos/transition-corridor-archive.mp4'
 };
