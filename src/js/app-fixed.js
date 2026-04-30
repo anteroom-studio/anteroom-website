@@ -30,6 +30,8 @@ const mark=document.createElement('div');mark.className='studio-mark';mark.inner
 const line=document.createElement('div');line.className='studio-line';line.textContent='Research and engineering studio / ZAI 2019';root.appendChild(line);
 const slabLayer=document.createElement('div');slabLayer.className='slab-layer';root.appendChild(slabLayer);
 
+root.style.background='#000';
+
 let current=0,busy=false,inspecting=false,lastMove=Date.now();
 let targetX=innerWidth/2,targetY=innerHeight/2,currentX=targetX,currentY=targetY;
 
@@ -74,12 +76,14 @@ addEventListener('mousemove',e=>setPresence(e.clientX,e.clientY));
 setPresence(innerWidth/2,innerHeight/2);
 setInterval(()=>{if(Date.now()-lastMove<1500)return;const t=Date.now()/1600;applyDrift(front,innerWidth/2+Math.sin(t)*34,innerHeight/2+Math.cos(t*.7)*22);},80);
 
-function showPoster(r){root.style.backgroundImage='url("'+r.poster[0]+'")';root.style.backgroundSize='cover';root.style.backgroundPosition='center';}
 function prepareVideo(v,r){
-  showPoster(r);v.poster=r.poster[0]||'';v.loop=true;v.muted=true;v.playsInline=true;v.src=r.video[0];v.load();
+  root.style.backgroundImage='none';
+  v.removeAttribute('poster');
+  v.poster='';
+  v.loop=true;v.muted=true;v.playsInline=true;v.src=r.video[0];v.load();
   const p=v.play();if(p&&p.catch)p.catch(()=>{});
 }
-function swapVideos(){const old=front;front=back;back=old;back.className='scene-video';back.pause();}
+function swapVideos(){const old=front;front=back;back=old;back.className='scene-video';back.removeAttribute('poster');back.poster='';back.pause();}
 function closeInspection(){inspecting=false;slabLayer.classList.remove('inspecting');slabLayer.querySelectorAll('.artifact-slab').forEach(el=>el.classList.remove('active'));}
 function renderSlabs(show){
   closeInspection();
@@ -108,7 +112,7 @@ function playTravelTransition(nextIndex,src){
   const oldCopy=document.querySelector('.room-copy');if(oldCopy)oldCopy.classList.add('out');
   renderSlabs(false);front.classList.add('pushing');targetX=innerWidth/2;targetY=innerHeight/2;
   setTimeout(()=>{
-    travel.pause();travel.src=src;travel.load();travel.currentTime=0;travel.style.display='block';travel.style.opacity='0';travel.style.transition='opacity 180ms ease';
+    travel.pause();travel.removeAttribute('poster');travel.poster='';travel.src=src;travel.load();travel.currentTime=0;travel.style.display='block';travel.style.opacity='0';travel.style.transition='opacity 180ms ease';
     requestAnimationFrame(()=>{travel.style.opacity='1';});
     function finishTravel(){if(finished)return;finished=true;travel.pause();travel.style.opacity='0';setTimeout(()=>{travel.style.display='none';},220);setTimeout(()=>{arriveScene(nextIndex);},180);}
     const fallbackTimer=setTimeout(finishTravel,8200);
@@ -133,8 +137,8 @@ addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='Enter'||e.key==
 front.addEventListener('canplay',()=>{front.classList.add('active');keepVideoAlive(front);});
 front.addEventListener('ended',()=>{front.currentTime=0;keepVideoAlive(front);});
 front.addEventListener('pause',()=>{if(travel.style.display!=='block')keepVideoAlive(front);});
-front.addEventListener('error',()=>{showPoster(rooms[current]);front.classList.add('active');});
+front.addEventListener('error',()=>{front.classList.add('active');});
 back.addEventListener('canplay',()=>{back.loop=true;});
 back.addEventListener('ended',()=>{back.currentTime=0;keepVideoAlive(back);});
-back.addEventListener('error',()=>{showPoster(rooms[current]);});
+back.addEventListener('error',()=>{});
 addEventListener('load',()=>{setTimeout(()=>{loading.classList.add('hide');prepareVideo(front,rooms[0]);updateUI(rooms[0]);},700);});
