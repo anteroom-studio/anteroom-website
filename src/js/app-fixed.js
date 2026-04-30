@@ -3,21 +3,13 @@ import { rooms, archiveSlabs } from '../data/rooms.js';
 const root=document.getElementById('pov');
 const loading=document.getElementById('loading');
 
-// ===== PRESENCE SYSTEM =====
-let presence = 0;
-let lastMoveTime = Date.now();
-
-document.addEventListener('mousemove', () => {
-  presence = 1;
-  lastMoveTime = Date.now();
-});
-
-setInterval(() => {
-  if (Date.now() - lastMoveTime > 1500) {
-    presence *= 0.97;
-  }
-  document.body.style.setProperty('--presence', presence);
-}, 60);
+let presence=0;
+let lastMoveTime=Date.now();
+document.addEventListener('mousemove',()=>{presence=1;lastMoveTime=Date.now();});
+setInterval(()=>{
+  if(Date.now()-lastMoveTime>1500)presence*=0.97;
+  document.body.style.setProperty('--presence',presence.toFixed(3));
+},60);
 
 function makeVideo(){
   const v=document.createElement('video');
@@ -45,6 +37,12 @@ const cursor=document.createElement('div');cursor.className='cursor';document.bo
 const mark=document.createElement('div');mark.className='studio-mark';mark.innerHTML='<i></i><span>Anteroom</span>';root.appendChild(mark);
 const line=document.createElement('div');line.className='studio-line';line.textContent='Research and engineering studio / ZAI 2019';root.appendChild(line);
 const slabLayer=document.createElement('div');slabLayer.className='slab-layer';root.appendChild(slabLayer);
+
+const deepDive=document.createElement('div');
+deepDive.id='deepDive';
+deepDive.className='deep-dive';
+deepDive.innerHTML='';
+document.body.appendChild(deepDive);
 
 root.style.background='#000';root.style.backgroundImage='none';
 
@@ -108,35 +106,49 @@ function closeInspection(){
   slabLayer.querySelectorAll('.artifact-slab').forEach(el=>el.classList.remove('active'));
 }
 
+function openDeepDive(data){
+  deepDive.innerHTML='<button class="deep-close" aria-label="Close">×</button><div class="deep-card"><div class="deep-id">'+data.id+'</div><h2>'+data.title+'</h2><div class="deep-signal">'+(data.signal||'System record')+'</div><p>'+data.desc+'</p><div class="deep-command">→ '+(data.command||'Access record')+'</div></div>';
+  deepDive.classList.add('open');
+}
+
+function closeDeepDive(){
+  deepDive.classList.remove('open');
+  closeInspection();
+}
+
+deepDive.addEventListener('click',e=>{if(e.target===deepDive||e.target.classList.contains('deep-close'))closeDeepDive();});
+
 function renderSlabs(show){
   closeInspection();
-  if(!show){slabLayer.classList.remove('show');return;}
+  if(!show){slabLayer.classList.remove('show');slabLayer.innerHTML='';return;}
   slabLayer.innerHTML=archiveSlabs.map((s,i)=>'<button class="artifact-slab slab-'+i+'" data-i="'+i+'"><b>'+s.id+'</b><strong>'+s.title+'</strong><small>'+s.type+' / '+s.state+'</small></button>').join('');
   requestAnimationFrame(()=>slabLayer.classList.add('show'));
-  slabLayer.querySelectorAll('.artifact-slab').forEach(el=>{el.onclick = e => {
-  e.stopPropagation();
-
-  const i = el.dataset.i;
-
-  if (archiveSlabs[i]) {
-    openDeepDive(archiveSlabs[i]);
-  }
-};e.stopPropagation();if(inspecting)return;inspecting=true;slabLayer.classList.add('inspecting');el.classList.add('active');};});
+  slabLayer.querySelectorAll('.artifact-slab').forEach(el=>{
+    el.onclick=e=>{
+      e.stopPropagation();
+      const i=Number(el.dataset.i);
+      if(!archiveSlabs[i])return;
+      inspecting=true;
+      slabLayer.classList.add('inspecting');
+      el.classList.add('active');
+      openDeepDive(archiveSlabs[i]);
+    };
+  });
 }
-addEventListener('click',()=>{if(inspecting)closeInspection();});
-addEventListener('keydown',e=>{if(e.key==='Escape'&&inspecting)closeInspection();});
+addEventListener('click',()=>{if(inspecting&&!deepDive.classList.contains('open'))closeInspection();});
+addEventListener('keydown',e=>{if(e.key==='Escape'){if(deepDive.classList.contains('open'))closeDeepDive();else if(inspecting)closeInspection();}});
 
 function loadScene(i,force=false){
   if(busy&&!force)return;busy=true;
   const r=rooms[i],oldCopy=document.querySelector('.room-copy');if(oldCopy)oldCopy.classList.add('out');
-  renderSlabs(false);prepareVideo(back,r,true);veil.classList.add('in');sweep.classList.add('in');front.classList.add('pushing');
+  closeDeepDive();renderSlabs(false);prepareVideo(back,r,true);veil.classList.add('in');sweep.classList.add('in');front.classList.add('pushing');
   setTimeout(()=>{back.classList.add('active');front.classList.add('leaving');},180);
   setTimeout(()=>{swapVideos();updateUI(r);renderSlabs(r.id==='archive');keepVideoAlive(front);front.classList.remove('pushing');veil.classList.remove('in');sweep.classList.remove('in');busy=false;},860);
 }
 
 function blendIntoScene(nextIndex){
   const r=rooms[nextIndex];
-  renderSlabs(false);prepareVideo(back,r,true);
+  closeDeepDive();renderSlabs(false);prepareVideo(back,r,true);
   back.classList.add('active');back.style.opacity='0';back.style.transition='opacity 160ms ease-out';
   front.style.transition='opacity 160ms ease-out';
   requestAnimationFrame(()=>{back.style.opacity='1';front.style.opacity='0';setTimeout(()=>{swapVideos();updateUI(r);renderSlabs(r.id==='archive');keepVideoAlive(front);front.classList.remove('pushing');front.classList.remove('leaving');busy=false;},180);});
@@ -147,7 +159,7 @@ function playTravelTransition(nextIndex,src){
   let finished=false;
   const nextRoom=rooms[nextIndex],oldCopy=document.querySelector('.room-copy');
   if(oldCopy)oldCopy.classList.add('out');
-  renderSlabs(false);front.classList.add('pushing');targetX=innerWidth/2;targetY=innerHeight/2;
+  closeDeepDive();renderSlabs(false);front.classList.add('pushing');targetX=innerWidth/2;targetY=innerHeight/2;
   prepareVideo(back,nextRoom,false);
   travel.pause();travel.removeAttribute('poster');travel.poster='';travel.src=src;travel.load();travel.currentTime=0;
   travel.style.display='block';travel.style.opacity='0';travel.style.transition='opacity 100ms ease-out';
@@ -166,6 +178,7 @@ function updateUI(r){
 }
 
 function goNext(){
+  if(deepDive.classList.contains('open')){closeDeepDive();return;}
   if(inspecting){closeInspection();return;}
   const from=rooms[current],nextIndex=(current+1)%rooms.length,to=rooms[nextIndex],travelSrc=travelMap[from.id+':'+to.id];
   current=nextIndex;
@@ -182,45 +195,3 @@ back.addEventListener('ended',()=>{back.currentTime=0;keepVideoAlive(back);});
 back.addEventListener('error',()=>{});
 
 addEventListener('load',()=>{setTimeout(()=>{loading.classList.add('hide');prepareVideo(front,rooms[0],true);updateUI(rooms[0]);},700);});
-
-// ===== DEEP DIVE SYSTEM =====
-const deepDive = document.createElement('div');
-deepDive.id = 'deepDive';
-
-deepDive.style.cssText = `
-position:fixed;
-inset:0;
-z-index:200;
-display:flex;
-align-items:center;
-justify-content:center;
-background:rgba(0,0,0,0.92);
-opacity:0;
-pointer-events:none;
-transition:opacity 0.6s ease;
-color:#e8e1d4;
-padding:40px;
-`;
-
-document.body.appendChild(deepDive);
-
-function openDeepDive(data){
-  deepDive.innerHTML = `
-    <div style="max-width:700px">
-      <div style="color:#c9a961;font-size:11px;letter-spacing:0.25em">${data.id}</div>
-      <h1 style="font-size:52px;font-family:serif;margin:10px 0">${data.title}</h1>
-      <p style="opacity:0.6;margin-bottom:16px">${data.signal || ''}</p>
-      <p style="line-height:1.7">${data.desc}</p>
-      <div style="margin-top:28px;color:#c9a961">→ ${data.command || 'Access record'}</div>
-    </div>
-  `;
-  deepDive.style.opacity = '1';
-  deepDive.style.pointerEvents = 'auto';
-}
-
-function closeDeepDive(){
-  deepDive.style.opacity = '0';
-  deepDive.style.pointerEvents = 'none';
-}
-
-deepDive.addEventListener('click', closeDeepDive);
