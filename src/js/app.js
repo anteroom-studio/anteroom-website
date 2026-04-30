@@ -74,6 +74,26 @@ const travelMap = {
   'corridor:archive': 'assets/videos/transition-corridor-archive.mp4'
 };
 
+function keepVideoAlive(v) {
+  v.loop = true;
+  v.muted = true;
+  v.playsInline = true;
+  if (!v.src) return;
+  if (v.ended || v.paused || v.readyState < 2) {
+    const p = v.play();
+    if (p && p.catch) p.catch(() => {});
+  }
+}
+
+setInterval(() => {
+  if (travel.style.display === 'block') return;
+  keepVideoAlive(front);
+}, 1200);
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) setTimeout(() => keepVideoAlive(front), 250);
+});
+
 function applyDrift(v, x, y) {
   const dx = (x / window.innerWidth - 0.5) * 10;
   const dy = (y / window.innerHeight - 0.5) * 8;
@@ -113,6 +133,9 @@ function showPoster(r) {
 function prepareVideo(v, r) {
   showPoster(r);
   v.poster = r.poster[0] || '';
+  v.loop = true;
+  v.muted = true;
+  v.playsInline = true;
   v.src = r.video[0];
   v.load();
   const p = v.play();
@@ -124,6 +147,7 @@ function swapVideos() {
   front = back;
   back = old;
   back.className = 'scene-video';
+  back.pause();
 }
 
 function closeInspection() {
@@ -175,6 +199,7 @@ function loadScene(i, force = false) {
     swapVideos();
     updateUI(r);
     renderSlabs(r.id === 'archive');
+    keepVideoAlive(front);
     front.classList.remove('pushing');
     veil.classList.remove('in');
     sweep.classList.remove('in');
@@ -192,6 +217,7 @@ function arriveScene(i) {
     swapVideos();
     updateUI(r);
     renderSlabs(r.id === 'archive');
+    keepVideoAlive(front);
     front.classList.remove('pushing');
     front.classList.remove('leaving');
     busy = false;
@@ -273,8 +299,12 @@ window.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ') goNext();
 });
 
-front.addEventListener('canplay', () => { front.classList.add('active'); });
+front.addEventListener('canplay', () => { front.classList.add('active'); keepVideoAlive(front); });
+front.addEventListener('ended', () => { front.currentTime = 0; keepVideoAlive(front); });
+front.addEventListener('pause', () => { if (travel.style.display !== 'block') keepVideoAlive(front); });
 front.addEventListener('error', () => { showPoster(rooms[current]); front.classList.add('active'); });
+back.addEventListener('canplay', () => { back.loop = true; });
+back.addEventListener('ended', () => { back.currentTime = 0; keepVideoAlive(back); });
 back.addEventListener('error', () => { showPoster(rooms[current]); });
 
 window.addEventListener('load', () => {
