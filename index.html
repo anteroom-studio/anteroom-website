@@ -7,6 +7,11 @@
 <link rel="stylesheet" href="src/css/pov.css" />
 <link rel="stylesheet" href="src/css/depth.css" />
 <link rel="stylesheet" href="src/css/alive.css" />
+<style>
+body::before,body::after,.pov::after{opacity:0;background:none}
+body.archive-mode::before,body.archive-mode::after{opacity:0;background:none}
+.scene-video,.scene-video.active,.scene-video.pushing,body.archive-mode .scene-video,body.archive-mode .scene-video.active{filter:none;animation:none}
+</style>
 </head>
 <body>
 
