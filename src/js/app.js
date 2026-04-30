@@ -32,6 +32,16 @@ const cursor = document.createElement('div');
 cursor.className = 'cursor';
 document.body.appendChild(cursor);
 
+const mark = document.createElement('div');
+mark.className = 'studio-mark';
+mark.innerHTML = '<i></i><span>Anteroom</span>';
+root.appendChild(mark);
+
+const line = document.createElement('div');
+line.className = 'studio-line';
+line.textContent = 'Research and engineering studio / ZAI 2019';
+root.appendChild(line);
+
 let current = 0;
 let busy = false;
 let lastMove = Date.now();
@@ -115,8 +125,9 @@ function loadScene(i){
 function updateUI(r){
   let ui = document.getElementById('ui');
   if(!ui){ ui = document.createElement('div'); ui.id = 'ui'; root.appendChild(ui); }
-  ui.innerHTML = '<div class="hud"><div class="room-copy"><div class="kicker">'+r.label+'</div><h1>'+r.title+'</h1><p>'+r.copy+'</p><div class="room-actions"><button class="btn" id="nextBtn">'+r.action+'</button></div></div></div><div class="side-index"><span>'+r.number+'</span><div class="bar"><i style="--progress:'+(((current+1)/rooms.length)*100)+'%"></i></div><span>'+rooms.length+'</span></div>';
+  ui.innerHTML = '<div class="hud"><div class="room-copy"><div class="kicker">'+r.label+'</div><h1>'+r.title+'</h1><p>'+r.copy+'</p><div class="room-actions"><button class="btn" id="nextBtn">'+r.action+'</button></div></div></div><div class="side-index"><span>'+r.number+'</span><div class="bar"><i style="--progress:'+(((current+1)/rooms.length)*100)+'%"></i></div><span>'+rooms.length+'</span></div><div class="room-note"><b>Studio record</b><span>The interface reveals only what the room is ready to show.</span></div>';
   document.getElementById('nextBtn').onclick = goNext;
+  requestAnimationFrame(()=>{ const copy = document.querySelector('.room-copy'); if(copy) copy.classList.add('show'); });
 }
 
 function goNext(){
