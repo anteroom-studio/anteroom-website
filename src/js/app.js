@@ -123,8 +123,10 @@ function applyDrift(v, x, y) {
 
 function setPresence(x, y) {
   lastMove = Date.now();
-  document.body.style.setProperty('--mx', x + 'px');
-  document.body.style.setProperty('--my', y + 'px');
+  
+  targetX = x;
+  targetY = y;
+  
   cursor.style.left = x + 'px';
   cursor.style.top = y + 'px';
   applyDrift(front, x, y);
