@@ -26,7 +26,17 @@ travel.muted = true;
 travel.playsInline = true;
 travel.setAttribute('webkit-playsinline', '');
 travel.preload = 'auto';
+travel.style.position = 'fixed';
+travel.style.inset = '0';
+travel.style.width = '100vw';
+travel.style.height = '100vh';
+travel.style.objectFit = 'cover';
+travel.style.zIndex = '999999';
+travel.style.background = '#000';
+travel.style.opacity = '0';
 travel.style.display = 'none';
+travel.style.pointerEvents = 'none';
+travel.style.transition = 'opacity 260ms ease';
 document.body.appendChild(travel);
 
 const veil = document.createElement('div');
@@ -61,6 +71,7 @@ let inspecting = false;
 let lastMove = Date.now();
 
 const travelMap = {
+  'threshold:corridor': 'assets/videos/transition-corridor-archive.mp4',
   'corridor:archive': 'assets/videos/transition-corridor-archive.mp4'
 };
 
@@ -179,26 +190,42 @@ function playTravelTransition(nextIndex, src) {
   if (oldCopy) oldCopy.classList.add('out');
   renderSlabs(false);
   front.classList.add('pushing');
+
+  travel.pause();
   travel.src = src;
+  travel.load();
   travel.currentTime = 0;
   travel.style.display = 'block';
-  travel.classList.add('show');
-  const p = travel.play();
-  if (p && p.catch) {
-    p.catch(() => {
-      travel.style.display = 'none';
-      travel.classList.remove('show');
-      busy = false;
-      loadScene(nextIndex);
-    });
-  }
+  requestAnimationFrame(() => { travel.style.opacity = '1'; });
+
+  const fallbackTimer = setTimeout(() => {
+    travel.style.opacity = '0';
+    setTimeout(() => { travel.style.display = 'none'; }, 280);
+    front.classList.remove('pushing');
+    busy = false;
+    loadScene(nextIndex, true);
+  }, 8500);
+
   travel.onended = () => {
-    travel.classList.remove('show');
-    travel.style.display = 'none';
+    clearTimeout(fallbackTimer);
+    travel.style.opacity = '0';
+    setTimeout(() => { travel.style.display = 'none'; }, 280);
     front.classList.remove('pushing');
     busy = false;
     loadScene(nextIndex, true);
   };
+
+  const p = travel.play();
+  if (p && p.catch) {
+    p.catch(() => {
+      clearTimeout(fallbackTimer);
+      travel.style.opacity = '0';
+      travel.style.display = 'none';
+      front.classList.remove('pushing');
+      busy = false;
+      loadScene(nextIndex, true);
+    });
+  }
 }
 
 function updateUI(r) {
