@@ -36,7 +36,7 @@ travel.style.background = '#000';
 travel.style.opacity = '0';
 travel.style.display = 'none';
 travel.style.pointerEvents = 'none';
-travel.style.transition = 'opacity 260ms ease';
+travel.style.transition = 'opacity 220ms ease';
 document.body.appendChild(travel);
 
 const veil = document.createElement('div');
@@ -71,7 +71,6 @@ let inspecting = false;
 let lastMove = Date.now();
 
 const travelMap = {
-  'threshold:corridor': 'assets/videos/transition-corridor-archive.mp4',
   'corridor:archive': 'assets/videos/transition-corridor-archive.mp4'
 };
 
@@ -183,9 +182,26 @@ function loadScene(i, force = false) {
   }, 860);
 }
 
+function arriveScene(i) {
+  const r = rooms[i];
+  renderSlabs(false);
+  prepareVideo(back, r);
+  back.classList.add('active');
+  front.classList.add('leaving');
+  setTimeout(() => {
+    swapVideos();
+    updateUI(r);
+    renderSlabs(r.id === 'archive');
+    front.classList.remove('pushing');
+    front.classList.remove('leaving');
+    busy = false;
+  }, 260);
+}
+
 function playTravelTransition(nextIndex, src) {
   if (busy) return;
   busy = true;
+  let finished = false;
   const oldCopy = document.querySelector('.room-copy');
   if (oldCopy) oldCopy.classList.add('out');
   renderSlabs(false);
@@ -198,32 +214,26 @@ function playTravelTransition(nextIndex, src) {
   travel.style.display = 'block';
   requestAnimationFrame(() => { travel.style.opacity = '1'; });
 
-  const fallbackTimer = setTimeout(() => {
+  function finishTravel() {
+    if (finished) return;
+    finished = true;
+    travel.pause();
     travel.style.opacity = '0';
-    setTimeout(() => { travel.style.display = 'none'; }, 280);
-    front.classList.remove('pushing');
-    busy = false;
-    loadScene(nextIndex, true);
-  }, 8500);
+    setTimeout(() => { travel.style.display = 'none'; }, 220);
+    arriveScene(nextIndex);
+  }
 
+  const fallbackTimer = setTimeout(finishTravel, 8200);
   travel.onended = () => {
     clearTimeout(fallbackTimer);
-    travel.style.opacity = '0';
-    setTimeout(() => { travel.style.display = 'none'; }, 280);
-    front.classList.remove('pushing');
-    busy = false;
-    loadScene(nextIndex, true);
+    finishTravel();
   };
 
   const p = travel.play();
   if (p && p.catch) {
     p.catch(() => {
       clearTimeout(fallbackTimer);
-      travel.style.opacity = '0';
-      travel.style.display = 'none';
-      front.classList.remove('pushing');
-      busy = false;
-      loadScene(nextIndex, true);
+      finishTravel();
     });
   }
 }
