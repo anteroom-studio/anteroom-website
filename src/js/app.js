@@ -251,11 +251,66 @@ function arriveScene(i) {
 function playTravelTransition(nextIndex, src) {
   if (busy) return;
   busy = true;
+
   let finished = false;
+
   const oldCopy = document.querySelector('.room-copy');
   if (oldCopy) oldCopy.classList.add('out');
+
   renderSlabs(false);
   front.classList.add('pushing');
+
+  // Center the light before travel starts
+  targetX = window.innerWidth / 2;
+  targetY = window.innerHeight / 2;
+
+  // Intentional micro-pause before transition video starts
+  setTimeout(() => {
+    travel.pause();
+    travel.src = src;
+    travel.load();
+    travel.currentTime = 0;
+
+    travel.style.display = 'block';
+    travel.style.opacity = '0';
+    travel.style.transition = 'opacity 180ms ease';
+
+    requestAnimationFrame(() => {
+      travel.style.opacity = '1';
+    });
+
+    function finishTravel() {
+      if (finished) return;
+      finished = true;
+
+      travel.pause();
+      travel.style.opacity = '0';
+
+      setTimeout(() => {
+        travel.style.display = 'none';
+      }, 220);
+
+      setTimeout(() => {
+        arriveScene(nextIndex);
+      }, 180);
+    }
+
+    const fallbackTimer = setTimeout(finishTravel, 8200);
+
+    travel.onended = () => {
+      clearTimeout(fallbackTimer);
+      finishTravel();
+    };
+
+    const p = travel.play();
+    if (p && p.catch) {
+      p.catch(() => {
+        clearTimeout(fallbackTimer);
+        finishTravel();
+      });
+    }
+  }, 220);
+}
 
   travel.pause();
   travel.src = src;
