@@ -1,4 +1,4 @@
-import { rooms } from '../data/rooms.js';
+import { rooms, archiveSlabs } from '../data/rooms.js';
 
 const root = document.getElementById('pov');
 const loading = document.getElementById('loading');
@@ -42,6 +42,10 @@ line.className = 'studio-line';
 line.textContent = 'Research and engineering studio / ZAI 2019';
 root.appendChild(line);
 
+const slabLayer = document.createElement('div');
+slabLayer.className = 'slab-layer';
+root.appendChild(slabLayer);
+
 let current = 0;
 let busy = false;
 let lastMove = Date.now();
@@ -51,6 +55,8 @@ function applyDrift(v, x, y){
   const dy = (y / window.innerHeight - 0.5) * 8;
   v.style.setProperty('--driftX', dx + 'px');
   v.style.setProperty('--driftY', dy + 'px');
+  slabLayer.style.setProperty('--sx', (dx * -1.4) + 'px');
+  slabLayer.style.setProperty('--sy', (dy * -1.1) + 'px');
 }
 
 function setPresence(x, y){
@@ -95,12 +101,19 @@ function swapVideos(){
   back.className = 'scene-video';
 }
 
+function renderSlabs(show){
+  if(!show){ slabLayer.classList.remove('show'); return; }
+  slabLayer.innerHTML = archiveSlabs.map((s,idx)=>'<button class="artifact-slab slab-'+idx+'"><b>'+s.id+'</b><strong>'+s.title+'</strong><small>'+s.type+' / '+s.state+'</small></button>').join('');
+  requestAnimationFrame(()=>slabLayer.classList.add('show'));
+}
+
 function loadScene(i){
   if(busy) return;
   busy = true;
   const r = rooms[i];
   const oldCopy = document.querySelector('.room-copy');
   if(oldCopy) oldCopy.classList.add('out');
+  renderSlabs(false);
 
   prepareVideo(back, r);
   veil.classList.add('in');
@@ -115,6 +128,7 @@ function loadScene(i){
   setTimeout(()=>{
     swapVideos();
     updateUI(r);
+    renderSlabs(r.id === 'archive');
     front.classList.remove('pushing');
     veil.classList.remove('in');
     sweep.classList.remove('in');
