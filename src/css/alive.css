@@ -1,13 +1,13 @@
 /* =========================================================
    PHASE 5 — ALIVE DEPTH SYSTEM
-   Motion-only upgrade. Keeps Phase 4 layout/engine untouched.
+   Safe motion-only layer. Preserves Phase 4 slab positions.
    ========================================================= */
 
 :root{
   --alive-ease:cubic-bezier(.16,1,.3,1);
 }
 
-/* world presence: page feels alive without moving the fixed engine */
+/* Soft living atmosphere over the POV world */
 .pov::before{
   content:'';
   position:fixed;
@@ -15,7 +15,7 @@
   z-index:33;
   pointer-events:none;
   background:
-    radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(244,228,184,.13),transparent 18rem),
+    radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(244,228,184,.14),transparent 18rem),
     radial-gradient(circle at 50% 52%,rgba(201,169,97,.055),transparent 44%);
   opacity:.42;
   mix-blend-mode:screen;
@@ -27,20 +27,20 @@
   50%{opacity:.56;transform:scale(1.025)}
 }
 
-/* archive depth becomes responsive, not static */
+/* Archive layer responds gently to cursor drift */
 body.archive-mode .slab-layer{
   transform:
     translate3d(var(--sx,0),var(--sy,0),0)
-    rotateX(calc(var(--sy,0px) * -.025))
-    rotateY(calc(var(--sx,0px) * .025));
+    rotateX(calc(var(--sy,0px) * -.02))
+    rotateY(calc(var(--sx,0px) * .02));
   transform-style:preserve-3d;
   will-change:transform,opacity;
 }
 
-/* high quality 3D artifact slabs */
+/* Artifact material upgrade: brass/stone, not flat cards */
 body.archive-mode .artifact-slab{
   overflow:hidden;
-  border-radius:2px;
+  border-radius:3px;
   transform-style:preserve-3d;
   will-change:transform,filter,box-shadow,opacity;
   background:
@@ -53,7 +53,6 @@ body.archive-mode .artifact-slab{
     inset 12px 0 32px rgba(255,210,120,.035),
     0 0 72px rgba(201,169,97,.075),
     0 42px 130px rgba(0,0,0,.48);
-  animation:artifactBreathe 7.5s ease-in-out infinite;
 }
 
 body.archive-mode .artifact-slab::before{
@@ -79,7 +78,6 @@ body.archive-mode .artifact-slab::after{
   background:radial-gradient(ellipse at center,rgba(0,0,0,.72),transparent 70%);
   filter:blur(10px);
   opacity:.72;
-  transform:translateZ(-1px);
 }
 
 body.archive-mode .artifact-slab b,
@@ -90,47 +88,44 @@ body.archive-mode .artifact-slab small{
   text-shadow:0 12px 34px rgba(0,0,0,.75);
 }
 
-body.archive-mode .artifact-slab b{
-  color:#ffe39d;
+body.archive-mode .artifact-slab b{color:#ffe39d}
+body.archive-mode .artifact-slab strong{color:#f5ecd8}
+body.archive-mode .artifact-slab small{color:#b79d5f}
+
+/* Living motion: each slab keeps its Phase 4 left/top and original Z-depth */
+body.archive-mode .slab-0{animation:aliveFloat0 7.8s ease-in-out infinite}
+body.archive-mode .slab-1{animation:aliveFloat1 8.6s ease-in-out infinite -.9s}
+body.archive-mode .slab-2{animation:aliveFloat2 7.2s ease-in-out infinite -1.8s}
+body.archive-mode .slab-3{animation:aliveFloat3 9.1s ease-in-out infinite -2.7s}
+body.archive-mode .slab-4{animation:aliveFloat4 8.2s ease-in-out infinite -3.6s}
+body.archive-mode .slab-5{animation:aliveFloat5 9.6s ease-in-out infinite -4.5s}
+
+@keyframes aliveFloat0{
+  0%,100%{transform:translate3d(0,0,90px) rotateY(-8deg);filter:brightness(.96) saturate(.96)}
+  50%{transform:translate3d(0,-13px,112px) rotateY(-5deg);filter:brightness(1.10) saturate(1.05)}
+}
+@keyframes aliveFloat1{
+  0%,100%{transform:translate3d(0,0,-80px) rotateY(12deg);filter:brightness(.94) saturate(.96)}
+  50%{transform:translate3d(0,10px,-58px) rotateY(8deg);filter:brightness(1.08) saturate(1.04)}
+}
+@keyframes aliveFloat2{
+  0%,100%{transform:translate3d(0,0,-30px) rotateY(-15deg);filter:brightness(.95) saturate(.96)}
+  50%{transform:translate3d(0,-9px,-8px) rotateY(-19deg);filter:brightness(1.09) saturate(1.04)}
+}
+@keyframes aliveFloat3{
+  0%,100%{transform:translate3d(0,0,40px) rotateY(10deg);filter:brightness(.95) saturate(.96)}
+  50%{transform:translate3d(0,14px,62px) rotateY(14deg);filter:brightness(1.10) saturate(1.05)}
+}
+@keyframes aliveFloat4{
+  0%,100%{transform:translate3d(0,0,-130px) rotateY(3deg);filter:brightness(.93) saturate(.95)}
+  50%{transform:translate3d(0,-7px,-108px) rotateY(0deg);filter:brightness(1.07) saturate(1.03)}
+}
+@keyframes aliveFloat5{
+  0%,100%{transform:translate3d(0,0,-180px) rotateY(-4deg);filter:brightness(.92) saturate(.95)}
+  50%{transform:translate3d(0,8px,-158px) rotateY(-8deg);filter:brightness(1.06) saturate(1.02)}
 }
 
-body.archive-mode .artifact-slab strong{
-  color:#f5ecd8;
-}
-
-body.archive-mode .artifact-slab small{
-  color:#b79d5f;
-}
-
-/* individual breathing: slabs never move together */
-body.archive-mode .slab-0{animation-delay:0s}
-body.archive-mode .slab-1{animation-delay:-1.15s}
-body.archive-mode .slab-2{animation-delay:-2.3s}
-body.archive-mode .slab-3{animation-delay:-3.45s}
-body.archive-mode .slab-4{animation-delay:-4.6s}
-body.archive-mode .slab-5{animation-delay:-5.75s}
-
-@keyframes artifactBreathe{
-  0%,100%{filter:brightness(.96) saturate(.96)}
-  50%{filter:brightness(1.10) saturate(1.05)}
-}
-
-/* keep existing positions, add living lift and depth */
-body.archive-mode .slab-0{transform:translate3d(0,0,90px) rotateY(-8deg);animation-name:floatA}
-body.archive-mode .slab-1{transform:translate3d(0,0,-80px) rotateY(12deg);animation-name:floatB}
-body.archive-mode .slab-2{transform:translate3d(0,0,-30px) rotateY(-15deg);animation-name:floatC}
-body.archive-mode .slab-3{transform:translate3d(0,0,40px) rotateY(10deg);animation-name:floatD}
-body.archive-mode .slab-4{transform:translate3d(0,0,-130px) rotateY(3deg);animation-name:floatE}
-body.archive-mode .slab-5{transform:translate3d(0,0,-180px) rotateY(-4deg);animation-name:floatF}
-
-@keyframes floatA{0%,100%{translate:0 0;rotate:y -8deg}50%{translate:0 -13px;rotate:y -5deg}}
-@keyframes floatB{0%,100%{translate:0 0;rotate:y 12deg}50%{translate:0 10px;rotate:y 8deg}}
-@keyframes floatC{0%,100%{translate:0 0;rotate:y -15deg}50%{translate:0 -9px;rotate:y -19deg}}
-@keyframes floatD{0%,100%{translate:0 0;rotate:y 10deg}50%{translate:0 14px;rotate:y 14deg}}
-@keyframes floatE{0%,100%{translate:0 0;rotate:y 3deg}50%{translate:0 -7px;rotate:y 0deg}}
-@keyframes floatF{0%,100%{translate:0 0;rotate:y -4deg}50%{translate:0 8px;rotate:y -8deg}}
-
-/* cinematic focus: nearby slab feels chosen, others fall back */
+/* Cinematic focus: selected slab comes alive, others fall back */
 body.archive-mode .slab-layer:hover .artifact-slab{
   opacity:.42;
   filter:blur(1.6px) brightness(.72) saturate(.9);
@@ -151,7 +146,7 @@ body.archive-mode .slab-layer .artifact-slab:hover{
     0 58px 160px rgba(0,0,0,.56);
 }
 
-/* inspection remains stable, just more monumental */
+/* Inspection stays stable and monumental */
 body.archive-mode .slab-layer.inspecting .artifact-slab.active{
   animation:none;
   border-color:rgba(255,233,178,.78);
@@ -162,7 +157,7 @@ body.archive-mode .slab-layer.inspecting .artifact-slab.active{
     0 70px 190px rgba(0,0,0,.66);
 }
 
-/* background answers the mouse with light */
+/* Background breathes only inside archive */
 body.archive-mode .scene-video.active{
   animation:archiveLightBreath 9s ease-in-out infinite;
 }
@@ -181,7 +176,5 @@ body.archive-mode .scene-video.active{
 }
 
 @media(max-width:760px){
-  body.archive-mode .artifact-slab{
-    animation:none;
-  }
+  body.archive-mode .artifact-slab{animation:none}
 }
