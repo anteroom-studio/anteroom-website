@@ -20,7 +20,7 @@ const travel=document.createElement('video');
 travel.className='travel-video';
 travel.muted=true;travel.playsInline=true;travel.preload='auto';
 travel.setAttribute('webkit-playsinline','');
-travel.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;object-fit:cover;z-index:999999;background:#000;opacity:0;display:none;pointer-events:none;transition:opacity 180ms ease';
+travel.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;object-fit:cover;z-index:999999;background:#000;opacity:0;display:none;pointer-events:none;transition:opacity 110ms ease-out';
 document.body.appendChild(travel);
 
 const veil=document.createElement('div');veil.className='transition-veil';root.appendChild(veil);
@@ -111,14 +111,18 @@ function playTravelTransition(nextIndex,src){
   if(busy)return;busy=true;let finished=false;
   const oldCopy=document.querySelector('.room-copy');if(oldCopy)oldCopy.classList.add('out');
   renderSlabs(false);front.classList.add('pushing');targetX=innerWidth/2;targetY=innerHeight/2;
-  setTimeout(()=>{
-    travel.pause();travel.removeAttribute('poster');travel.poster='';travel.src=src;travel.load();travel.currentTime=0;travel.style.display='block';travel.style.opacity='0';travel.style.transition='opacity 180ms ease';
-    requestAnimationFrame(()=>{travel.style.opacity='1';});
-    function finishTravel(){if(finished)return;finished=true;travel.pause();travel.style.opacity='0';setTimeout(()=>{travel.style.display='none';},220);setTimeout(()=>{arriveScene(nextIndex);},180);}
-    const fallbackTimer=setTimeout(finishTravel,8200);
-    travel.onended=()=>{clearTimeout(fallbackTimer);finishTravel();};
+
+  travel.pause();travel.removeAttribute('poster');travel.poster='';travel.src=src;travel.load();travel.currentTime=0;
+  travel.style.display='block';travel.style.opacity='0';travel.style.transition='opacity 110ms ease-out';
+
+  requestAnimationFrame(()=>{
     const p=travel.play();if(p&&p.catch)p.catch(()=>{clearTimeout(fallbackTimer);finishTravel();});
-  },220);
+    requestAnimationFrame(()=>{travel.style.opacity='1';});
+  });
+
+  function finishTravel(){if(finished)return;finished=true;travel.pause();travel.style.opacity='0';setTimeout(()=>{travel.style.display='none';},160);setTimeout(()=>{arriveScene(nextIndex);},120);}
+  const fallbackTimer=setTimeout(finishTravel,8200);
+  travel.onended=()=>{clearTimeout(fallbackTimer);finishTravel();};
 }
 function updateUI(r){
   if(r.id==='archive')document.body.classList.add('archive-mode');else document.body.classList.remove('archive-mode');
