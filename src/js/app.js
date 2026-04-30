@@ -146,8 +146,8 @@ function renderSlabs(show) {
 window.addEventListener('click', () => { if (inspecting) closeInspection(); });
 window.addEventListener('keydown', e => { if (e.key === 'Escape' && inspecting) closeInspection(); });
 
-function loadScene(i) {
-  if (busy) return;
+function loadScene(i, force = false) {
+  if (busy && !force) return;
   busy = true;
   const r = rooms[i];
   const oldCopy = document.querySelector('.room-copy');
@@ -160,7 +160,7 @@ function loadScene(i) {
   setTimeout(() => {
     back.classList.add('active');
     front.classList.add('leaving');
-  }, 220);
+  }, 180);
   setTimeout(() => {
     swapVideos();
     updateUI(r);
@@ -169,7 +169,7 @@ function loadScene(i) {
     veil.classList.remove('in');
     sweep.classList.remove('in');
     busy = false;
-  }, 980);
+  }, 860);
 }
 
 function playTravelTransition(nextIndex, src) {
@@ -179,27 +179,25 @@ function playTravelTransition(nextIndex, src) {
   if (oldCopy) oldCopy.classList.add('out');
   renderSlabs(false);
   front.classList.add('pushing');
-  setTimeout(() => {
-    travel.src = src;
-    travel.currentTime = 0;
-    travel.style.display = 'block';
-    travel.classList.add('show');
-    const p = travel.play();
-    if (p && p.catch) {
-      p.catch(() => {
-        travel.style.display = 'none';
-        travel.classList.remove('show');
-        busy = false;
-        loadScene(nextIndex);
-      });
-    }
-  }, 520);
+  travel.src = src;
+  travel.currentTime = 0;
+  travel.style.display = 'block';
+  travel.classList.add('show');
+  const p = travel.play();
+  if (p && p.catch) {
+    p.catch(() => {
+      travel.style.display = 'none';
+      travel.classList.remove('show');
+      busy = false;
+      loadScene(nextIndex);
+    });
+  }
   travel.onended = () => {
     travel.classList.remove('show');
     travel.style.display = 'none';
     front.classList.remove('pushing');
     busy = false;
-    loadScene(nextIndex);
+    loadScene(nextIndex, true);
   };
 }
 
