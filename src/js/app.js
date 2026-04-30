@@ -89,7 +89,11 @@ smoothLight();
 
 
 const travelMap = {
-  'corridor:archive': 'assets/videos/transition-corridor-archive.mp4'
+  'threshold:corridor': 'assets/videos/transition_threshold_to_passage.mp4',
+  'corridor:archive': 'assets/videos/transition_passage_to_archive.mp4',
+  'archive:research': 'assets/videos/transition_archive_to_chamber.mp4',
+  'research:exit': 'assets/videos/transition_chamber_to_last.mp4',
+  'exit:threshold': 'assets/videos/transition_last_to_threshold.mp4'
 };
 
 function keepVideoAlive(v) {
