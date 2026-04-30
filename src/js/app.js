@@ -3,15 +3,22 @@ import { rooms } from '../data/rooms.js';
 const root = document.getElementById('pov');
 const loading = document.getElementById('loading');
 
-const video = document.createElement('video');
-video.className = 'scene-video active';
-video.autoplay = true;
-video.muted = true;
-video.loop = true;
-video.playsInline = true;
-video.setAttribute('webkit-playsinline','');
-video.preload = 'auto';
-root.appendChild(video);
+function makeVideo(){
+  const v = document.createElement('video');
+  v.className = 'scene-video';
+  v.autoplay = true;
+  v.muted = true;
+  v.loop = true;
+  v.playsInline = true;
+  v.setAttribute('webkit-playsinline','');
+  v.preload = 'auto';
+  root.appendChild(v);
+  return v;
+}
+
+let front = makeVideo();
+let back = makeVideo();
+front.classList.add('active');
 
 const veil = document.createElement('div');
 veil.className = 'transition-veil';
@@ -27,19 +34,34 @@ document.body.appendChild(cursor);
 
 let current = 0;
 let busy = false;
+let lastMove = Date.now();
+
+function applyDrift(v, x, y){
+  const dx = (x / window.innerWidth - 0.5) * 10;
+  const dy = (y / window.innerHeight - 0.5) * 8;
+  v.style.setProperty('--driftX', dx + 'px');
+  v.style.setProperty('--driftY', dy + 'px');
+}
 
 function setPresence(x, y){
+  lastMove = Date.now();
   document.body.style.setProperty('--mx', x + 'px');
   document.body.style.setProperty('--my', y + 'px');
   cursor.style.left = x + 'px';
   cursor.style.top = y + 'px';
-  const dx = (x / window.innerWidth - 0.5) * 10;
-  const dy = (y / window.innerHeight - 0.5) * 8;
-  video.style.setProperty('--driftX', dx + 'px');
-  video.style.setProperty('--driftY', dy + 'px');
+  applyDrift(front, x, y);
+  applyDrift(back, x, y);
 }
 window.addEventListener('mousemove', e => setPresence(e.clientX, e.clientY));
 setPresence(window.innerWidth/2, window.innerHeight/2);
+
+setInterval(()=>{
+  if(Date.now() - lastMove < 1500) return;
+  const t = Date.now() / 1600;
+  const x = window.innerWidth/2 + Math.sin(t) * 34;
+  const y = window.innerHeight/2 + Math.cos(t * .7) * 22;
+  applyDrift(front, x, y);
+}, 80);
 
 function showPoster(r){
   root.style.backgroundImage = 'url("' + r.poster[0] + '")';
@@ -47,47 +69,73 @@ function showPoster(r){
   root.style.backgroundPosition = 'center';
 }
 
-function playRoom(r){
+function prepareVideo(v, r){
   showPoster(r);
-  video.poster = r.poster[0] || '';
-  video.src = r.video[0];
-  video.load();
-  const p = video.play();
+  v.poster = r.poster[0] || '';
+  v.src = r.video[0];
+  v.load();
+  const p = v.play();
   if(p && p.catch){ p.catch(()=>{}); }
+}
+
+function swapVideos(){
+  const old = front;
+  front = back;
+  back = old;
+  back.className = 'scene-video';
 }
 
 function loadScene(i){
   if(busy) return;
   busy = true;
   const r = rooms[i];
+  const oldCopy = document.querySelector('.room-copy');
+  if(oldCopy) oldCopy.classList.add('out');
+
+  prepareVideo(back, r);
   veil.classList.add('in');
   sweep.classList.add('in');
-  video.classList.add('pushing');
+  front.classList.add('pushing');
 
   setTimeout(()=>{
-    playRoom(r);
+    back.classList.add('active');
+    front.classList.add('leaving');
+  }, 220);
+
+  setTimeout(()=>{
+    swapVideos();
     updateUI(r);
-    video.classList.remove('pushing');
+    front.classList.remove('pushing');
     veil.classList.remove('in');
     sweep.classList.remove('in');
     busy = false;
-  }, 780);
+  }, 980);
 }
 
 function updateUI(r){
   let ui = document.getElementById('ui');
   if(!ui){ ui = document.createElement('div'); ui.id = 'ui'; root.appendChild(ui); }
   ui.innerHTML = '<div class="hud"><div class="room-copy"><div class="kicker">'+r.label+'</div><h1>'+r.title+'</h1><p>'+r.copy+'</p><div class="room-actions"><button class="btn" id="nextBtn">'+r.action+'</button></div></div></div><div class="side-index"><span>'+r.number+'</span><div class="bar"><i style="--progress:'+(((current+1)/rooms.length)*100)+'%"></i></div><span>'+rooms.length+'</span></div>';
-  document.getElementById('nextBtn').onclick = ()=>{ current = (current + 1) % rooms.length; loadScene(current); };
+  document.getElementById('nextBtn').onclick = goNext;
 }
 
-video.addEventListener('canplay',()=>{ video.classList.add('active'); });
-video.addEventListener('error',()=>{ showPoster(rooms[current]); video.classList.add('active'); });
+function goNext(){
+  current = (current + 1) % rooms.length;
+  loadScene(current);
+}
+
+window.addEventListener('keydown', e=>{
+  if(e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' '){ goNext(); }
+});
+
+front.addEventListener('canplay',()=>{ front.classList.add('active'); });
+front.addEventListener('error',()=>{ showPoster(rooms[current]); front.classList.add('active'); });
+back.addEventListener('error',()=>{ showPoster(rooms[current]); });
 
 window.addEventListener('load',()=>{
   setTimeout(()=>{
     loading.classList.add('hide');
-    playRoom(rooms[0]);
+    prepareVideo(front, rooms[0]);
     updateUI(rooms[0]);
   },700);
 });
