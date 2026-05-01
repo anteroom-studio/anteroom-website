@@ -1,0 +1,53 @@
+.archive-center-signal{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  display:flex;
+  gap:22px;
+  opacity:.08;
+  font-family:var(--mono);
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  animation:drift 18s linear infinite;
+}
+.archive-center-signal span{
+  animation:pulse 6s ease-in-out infinite;
+}
+@keyframes drift{
+  0%{transform:translate(-50%,-50%)}
+  50%{transform:translate(-48%,-52%)}
+  100%{transform:translate(-50%,-50%)}
+}
+@keyframes pulse{
+  0%,100%{opacity:.2}
+  50%{opacity:.6}
+}
+.slab-repos{
+  margin-top:12px;
+  padding:0;
+  list-style:none;
+  opacity:0;
+  max-height:0;
+  overflow:hidden;
+  transition:all .4s ease;
+}
+.artifact-slab:hover .slab-repos{
+  opacity:1;
+  max-height:200px;
+}
+.slab-repos li{
+  margin:6px 0;
+}
+.slab-repos b{
+  display:block;
+  font-size:11px;
+  color:#f0d98e;
+}
+.slab-repos span{
+  font-size:10px;
+  opacity:.7;
+}
+.signal-shift{
+  opacity:0;
+  transform:translateY(4px);
+}
