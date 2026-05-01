@@ -121,7 +121,7 @@ deepDive.addEventListener('click',e=>{if(e.target===deepDive||e.target.classList
 function renderSlabs(show){
   closeInspection();
   if(!show){slabLayer.classList.remove('show');slabLayer.innerHTML='';return;}
-  slabLayer.innerHTML=archiveSlabs.map((s,i)=>'<button class="artifact-slab slab-'+i+'" data-i="'+i+'"><b>'+s.id+'</b><strong>'+s.title+'</strong><small>'+s.type+' / '+s.state+'</small></button>').join('');
+  slabLayer.innerHTML=archiveSlabs.map((s,i)=>'<button class="artifact-slab slab-'+i+'" data-i="'+i+'"><span class="slab-id">'+s.id+'</span><span class="slab-state">'+s.state+'</span><strong>'+s.title+'</strong><small>'+s.type+'</small><em>'+s.signal+'</em><p>'+s.desc+'</p><span class="slab-command">'+s.command+'</span></button>').join('');
   requestAnimationFrame(()=>slabLayer.classList.add('show'));
   slabLayer.querySelectorAll('.artifact-slab').forEach(el=>{
     el.onclick=e=>{
