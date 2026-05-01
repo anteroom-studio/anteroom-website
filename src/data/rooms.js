@@ -26,7 +26,7 @@ export const rooms = [
     number: '002',
     title: 'The Living Archive',
     label: 'Artifacts / proof of execution',
-    copy: 'The slabs are not cards. They are records. Each one holds a system, a problem, a method, and the trace of execution. Hover to wake them. Select one to inspect the record.',
+    copy: 'A live map of Anteroom systems: market intelligence, research models, restaurant platforms, and studio infrastructure. Select a slab to inspect the system record.',
     action: 'Move deeper',
     next: 'research',
     poster: ['assets/images/archive-field.png','assets/images/ARCHIVE.png'],
@@ -59,56 +59,56 @@ export const rooms = [
 export const archiveSlabs = [
   {
     id: 'SYS-01',
-    title: 'Terminal',
-    type: 'Execution Layer',
-    state: 'Active — market-facing',
-    signal: 'Order flow / pressure / decision gates',
-    desc: 'A futures-first execution system focused on imbalance, depth, spread control, and disciplined trade entry logic.',
-    command: 'View execution system'
+    title: 'Market Systems',
+    type: 'Execution + Intelligence',
+    state: 'Active systems',
+    signal: 'Crypto Terminal / Oracle',
+    desc: 'Execution and intelligence systems for high-risk market environments, combining order flow, macro context, crisis replay, and scenario modeling.',
+    command: 'Explore market systems'
   },
   {
     id: 'SYS-02',
-    title: 'Oracle',
-    type: 'Intelligence Layer',
-    state: 'Evolving — macro-aware',
-    signal: 'Global signals / regime shifts',
-    desc: 'A wide-field intelligence system tracking geopolitical pressure, market regimes, and probabilistic future states.',
-    command: 'Open intelligence system'
+    title: 'Research Systems',
+    type: 'Cycles + models',
+    state: 'Active research',
+    signal: 'Genesis / World Model',
+    desc: 'Long-horizon research systems focused on cycles, causality, pattern behavior, and historical context across markets and global systems.',
+    command: 'Open research systems'
   },
   {
     id: 'SYS-03',
     title: 'Restaurant Systems',
-    type: 'Operational Layer',
-    state: 'Deployed — real-world use',
-    signal: 'Inventory / EOD / branch logic',
-    desc: 'A real-world operations layer for restaurant environments, covering product flow, reporting, and multi-location control.',
-    command: 'Inspect operational systems'
+    type: 'Real-world platforms',
+    state: 'Deployed',
+    signal: 'Hakka / Kajun / Operations',
+    desc: 'Restaurant platforms covering ordering flow, admin control, menu structure, inventory thinking, and customer-facing interfaces.',
+    command: 'View deployments'
   },
   {
     id: 'SYS-04',
-    title: 'Research Library',
-    type: 'Knowledge Layer',
-    state: 'Curated — internal use',
-    signal: 'Frameworks / notes / models',
-    desc: 'A structured environment for preserving research, building frameworks, and turning raw ideas into usable systems.',
-    command: 'Access research layer'
+    title: 'Studio Interface',
+    type: 'Public surface',
+    state: 'Active',
+    signal: 'Anteroom Website',
+    desc: 'The cinematic interface layer of the studio, designed to present systems, research, and artifacts through controlled interaction.',
+    command: 'Enter interface'
   },
   {
     id: 'SYS-05',
-    title: 'World Model',
-    type: 'Cognitive Layer',
-    state: 'Experimental — long horizon',
-    signal: 'Causality / simulation / memory',
-    desc: 'A modeling system exploring how events connect across domains and evolve over time.',
-    command: 'Observe model'
+    title: 'OSINT + Tooling',
+    type: 'Field systems',
+    state: 'Experimental',
+    signal: 'OSINT / automation / utilities',
+    desc: 'Supporting tools and field systems used for public-source research, data extraction, operational workflows, and environment setup.',
+    command: 'Inspect tools'
   },
   {
     id: 'SYS-06',
-    title: 'Archive Interface',
-    type: 'Interface Layer',
-    state: 'Forming — public surface',
-    signal: 'Narrative / motion / presence',
-    desc: 'The visible interface of the studio — a controlled environment where systems are revealed through interaction.',
-    command: 'Enter interface'
+    title: 'Future Systems',
+    type: 'Reserved layer',
+    state: 'In development',
+    signal: 'Unreleased work',
+    desc: 'Reserved space for upcoming systems, research papers, internal tools, and studio records not yet exposed to the archive.',
+    command: 'Await release'
   }
 ];
