@@ -11,6 +11,25 @@ setInterval(()=>{
   document.body.style.setProperty('--presence',presence.toFixed(3));
 },60);
 
+const studioSignals=[
+  'observing systems...',
+  'mapping archive records...',
+  'indexing active builds...',
+  'revealing structure...',
+  'awaiting interaction...'
+];
+let studioSignalIndex=0;
+setInterval(()=>{
+  const el=document.querySelector('.room-note span');
+  if(!el)return;
+  el.classList.add('signal-shift');
+  setTimeout(()=>{
+    studioSignalIndex=(studioSignalIndex+1)%studioSignals.length;
+    el.textContent=studioSignals[studioSignalIndex];
+    el.classList.remove('signal-shift');
+  },360);
+},3200);
+
 function makeVideo(){
   const v=document.createElement('video');
   v.className='scene-video';
@@ -107,7 +126,8 @@ function closeInspection(){
 }
 
 function openDeepDive(data){
-  deepDive.innerHTML='<button class="deep-close" aria-label="Close">×</button><div class="deep-card"><div class="deep-id">'+data.id+'</div><h2>'+data.title+'</h2><div class="deep-signal">'+(data.signal||'System record')+'</div><p>'+data.desc+'</p><div class="deep-command">→ '+(data.command||'Access record')+'</div></div>';
+  const repos=(data.repos||[]).map(r=>'<li><b>'+r.name+'</b><span>'+r.desc+'</span></li>').join('');
+  deepDive.innerHTML='<button class="deep-close" aria-label="Close">×</button><div class="deep-card"><div class="deep-id">'+data.id+'</div><h2>'+data.title+'</h2><div class="deep-signal">'+(data.signal||'System record')+'</div><p>'+data.desc+'</p>'+(repos?'<ul class="deep-repos">'+repos+'</ul>':'')+'<div class="deep-command">→ '+(data.command||'Access record')+'</div></div>';
   deepDive.classList.add('open');
 }
 
@@ -121,7 +141,12 @@ deepDive.addEventListener('click',e=>{if(e.target===deepDive||e.target.classList
 function renderSlabs(show){
   closeInspection();
   if(!show){slabLayer.classList.remove('show');slabLayer.innerHTML='';return;}
-  slabLayer.innerHTML=archiveSlabs.map((s,i)=>'<button class="artifact-slab slab-'+i+'" data-i="'+i+'"><span class="slab-id">'+s.id+'</span><span class="slab-state">'+s.state+'</span><strong>'+s.title+'</strong><small>'+s.type+'</small><em>'+s.signal+'</em><p>'+s.desc+'</p><span class="slab-command">'+s.command+'</span></button>').join('');
+  const center='<div class="archive-center-signal"><span>systems</span><span>records</span><span>signals</span><span>execution</span></div>';
+  const slabs=archiveSlabs.map((s,i)=>{
+    const repos=(s.repos||[]).map(r=>'<li><b>'+r.name+'</b><span>'+r.desc+'</span></li>').join('');
+    return '<button class="artifact-slab slab-'+i+'" data-i="'+i+'"><div class="slab-top"><span class="slab-id">'+s.id+'</span><span class="slab-state">'+s.state+'</span></div><strong>'+s.title+'</strong><small>'+s.type+'</small><em>'+s.signal+'</em><p>'+s.desc+'</p>'+(repos?'<ul class="slab-repos">'+repos+'</ul>':'')+'<span class="slab-command">'+s.command+'</span></button>';
+  }).join('');
+  slabLayer.innerHTML=center+slabs;
   requestAnimationFrame(()=>slabLayer.classList.add('show'));
   slabLayer.querySelectorAll('.artifact-slab').forEach(el=>{
     el.onclick=e=>{
@@ -172,7 +197,7 @@ function playTravelTransition(nextIndex,src){
 function updateUI(r){
   if(r.id==='archive')document.body.classList.add('archive-mode');else document.body.classList.remove('archive-mode');
   let ui=document.getElementById('ui');if(!ui){ui=document.createElement('div');ui.id='ui';root.appendChild(ui);}
-  ui.innerHTML='<div class="hud"><div class="room-copy"><div class="kicker">'+r.label+'</div><h1>'+r.title+'</h1><p>'+r.copy+'</p><div class="room-actions"><button class="btn" id="nextBtn">'+r.action+'</button></div></div></div><div class="side-index"><span>'+r.number+'</span><div class="bar"><i style="--progress:'+((current+1)/rooms.length)*100+'%"></i></div><span>'+rooms.length+'</span></div><div class="room-note"><b>Studio record</b><span>The interface reveals only what the room is ready to show.</span></div>';
+  ui.innerHTML='<div class="hud"><div class="room-copy"><div class="kicker">'+r.label+'</div><h1>'+r.title+'</h1><p>'+r.copy+'</p><div class="room-actions"><button class="btn" id="nextBtn">'+r.action+'</button></div></div></div><div class="side-index"><span>'+r.number+'</span><div class="bar"><i style="--progress:'+((current+1)/rooms.length)*100+'%"></i></div><span>'+rooms.length+'</span></div><div class="room-note"><b>Studio signal</b><span>'+studioSignals[studioSignalIndex]+'</span></div>';
   document.getElementById('nextBtn').onclick=goNext;
   requestAnimationFrame(()=>{const copy=document.querySelector('.room-copy');if(copy)copy.classList.add('show');});
 }
