@@ -26,7 +26,7 @@ export const rooms = [
     number: '002',
     title: 'The Living Archive',
     label: 'Artifacts / proof of execution',
-    copy: 'A live map of Anteroom systems: market intelligence, research models, restaurant platforms, and studio infrastructure. Select a slab to inspect the system record.',
+    copy: 'A live map of Anteroom systems: market intelligence, research models, restaurant platforms, studio infrastructure, and field tooling. Open a slab to inspect the systems inside.',
     action: 'Move deeper',
     next: 'research',
     poster: ['assets/images/archive-field.png','assets/images/ARCHIVE.png'],
@@ -60,55 +60,80 @@ export const archiveSlabs = [
   {
     id: 'SYS-01',
     title: 'Market Systems',
-    type: 'Execution + Intelligence',
+    type: 'Execution + intelligence',
     state: 'Active systems',
     signal: 'Crypto Terminal / Oracle',
-    desc: 'Execution and intelligence systems for high-risk market environments, combining order flow, macro context, crisis replay, and scenario modeling.',
-    command: 'Explore market systems'
+    desc: 'Systems for market execution, macro context, crisis replay, and scenario modeling.',
+    command: 'Expand market layer',
+    repos: [
+      {name:'Anteroom Crypto Terminal', desc:'Execution terminal for order flow, spread discipline, and risk checks.'},
+      {name:'Anteroom Oracle', desc:'Macro and geopolitical intelligence terminal for regime research.'}
+    ]
   },
   {
     id: 'SYS-02',
     title: 'Research Systems',
     type: 'Cycles + models',
     state: 'Active research',
-    signal: 'Genesis / World Model',
-    desc: 'Long-horizon research systems focused on cycles, causality, pattern behavior, and historical context across markets and global systems.',
-    command: 'Open research systems'
+    signal: 'Genesis / World Model / Data Model',
+    desc: 'Long-horizon research infrastructure for cycles, causality, pattern behavior, and historical context.',
+    command: 'Expand research layer',
+    repos: [
+      {name:'ZAI Genesis', desc:'Market-cycle and natural-pattern research terminal.'},
+      {name:'Anteroom World Model', desc:'Cross-domain event modeling before signals become obvious.'},
+      {name:'Anteroom Data Model', desc:'Structured memory layer for durable intelligence records.'}
+    ]
   },
   {
     id: 'SYS-03',
     title: 'Restaurant Systems',
-    type: 'Real-world platforms',
-    state: 'Deployed',
-    signal: 'Hakka / Kajun / Operations',
-    desc: 'Restaurant platforms covering ordering flow, admin control, menu structure, inventory thinking, and customer-facing interfaces.',
-    command: 'View deployments'
+    type: 'Operational platforms',
+    state: 'Deployed + demo',
+    signal: 'Hakka / Kajun / Restaurant Intelligence',
+    desc: 'Restaurant platforms covering ordering flow, admin control, menu structure, and operational visibility.',
+    command: 'Expand restaurant layer',
+    repos: [
+      {name:'Hakka Nation', desc:'Restaurant website and ordering interface system.'},
+      {name:'Kajun Chicken & Seafood', desc:'Menu and ordering interface for restaurant operations.'},
+      {name:'Anteroom Restaurant Intelligence', desc:'Back-office layer for stock, EOD reporting, and branch operations.'}
+    ]
   },
   {
     id: 'SYS-04',
-    title: 'Studio Interface',
+    title: 'Studio Infrastructure',
     type: 'Public surface',
-    state: 'Active',
-    signal: 'Anteroom Website',
-    desc: 'The cinematic interface layer of the studio, designed to present systems, research, and artifacts through controlled interaction.',
-    command: 'Enter interface'
+    state: 'Live',
+    signal: 'Anteroom Website / Archive Interface',
+    desc: 'The cinematic interface layer that presents systems, research, and artifacts through controlled interaction.',
+    command: 'Expand studio layer',
+    repos: [
+      {name:'Anteroom Website', desc:'Public archive and studio surface for systems and records.'}
+    ]
   },
   {
     id: 'SYS-05',
-    title: 'OSINT + Tooling',
-    type: 'Field systems',
+    title: 'Field Tooling',
+    type: 'OSINT + automation',
     state: 'Experimental',
-    signal: 'OSINT / automation / utilities',
-    desc: 'Supporting tools and field systems used for public-source research, data extraction, operational workflows, and environment setup.',
-    command: 'Inspect tools'
+    signal: 'OSINT / CLI / utilities',
+    desc: 'Supporting tools for public-source research, data extraction, environment setup, and workflow automation.',
+    command: 'Expand tooling layer',
+    repos: [
+      {name:'ZAI OSINT Kali', desc:'Public-source investigation toolkit for Kali environments.'},
+      {name:'ZAI CLI Private', desc:'Internal command workflow and toolchain experiments.'},
+      {name:'ZAI Runtime Private', desc:'Runtime layer for private tooling and local execution experiments.'}
+    ]
   },
   {
     id: 'SYS-06',
     title: 'Future Systems',
-    type: 'Reserved layer',
+    type: 'Reserved chamber',
     state: 'In development',
-    signal: 'Unreleased work',
-    desc: 'Reserved space for upcoming systems, research papers, internal tools, and studio records not yet exposed to the archive.',
-    command: 'Await release'
+    signal: 'Unreleased records',
+    desc: 'Reserved space for future systems, research papers, private builds, and studio records not yet exposed.',
+    command: 'Await release',
+    repos: [
+      {name:'Reserved Artifact Index', desc:'Future tools, studies, interface experiments, and private records.'}
+    ]
   }
 ];
