@@ -12,11 +12,11 @@ setInterval(()=>{
 },60);
 
 const studioSignals=[
-  'observing systems...',
-  'mapping archive records...',
-  'indexing active builds...',
-  'revealing structure...',
-  'awaiting interaction...'
+  'mapping live systems...',
+  'indexing research layers...',
+  'tracking active builds...',
+  'organizing archive records...',
+  'awaiting inspection...'
 ];
 let studioSignalIndex=0;
 setInterval(()=>{
@@ -125,8 +125,12 @@ function closeInspection(){
   slabLayer.querySelectorAll('.artifact-slab').forEach(el=>el.classList.remove('active'));
 }
 
+function repoList(data, cls){
+  return (data.repos||[]).map(r=>'<li><b>'+r.name+'</b><span>'+r.desc+'</span></li>').join('');
+}
+
 function openDeepDive(data){
-  const repos=(data.repos||[]).map(r=>'<li><b>'+r.name+'</b><span>'+r.desc+'</span></li>').join('');
+  const repos=repoList(data,'deep-repos');
   deepDive.innerHTML='<button class="deep-close" aria-label="Close">×</button><div class="deep-card"><div class="deep-id">'+data.id+'</div><h2>'+data.title+'</h2><div class="deep-signal">'+(data.signal||'System record')+'</div><p>'+data.desc+'</p>'+(repos?'<ul class="deep-repos">'+repos+'</ul>':'')+'<div class="deep-command">→ '+(data.command||'Access record')+'</div></div>';
   deepDive.classList.add('open');
 }
@@ -143,7 +147,7 @@ function renderSlabs(show){
   if(!show){slabLayer.classList.remove('show');slabLayer.innerHTML='';return;}
   const center='<div class="archive-center-signal"><span>systems</span><span>records</span><span>signals</span><span>execution</span></div>';
   const slabs=archiveSlabs.map((s,i)=>{
-    const repos=(s.repos||[]).map(r=>'<li><b>'+r.name+'</b><span>'+r.desc+'</span></li>').join('');
+    const repos=repoList(s,'slab-repos');
     return '<button class="artifact-slab slab-'+i+'" data-i="'+i+'"><div class="slab-top"><span class="slab-id">'+s.id+'</span><span class="slab-state">'+s.state+'</span></div><strong>'+s.title+'</strong><small>'+s.type+'</small><em>'+s.signal+'</em><p>'+s.desc+'</p>'+(repos?'<ul class="slab-repos">'+repos+'</ul>':'')+'<span class="slab-command">'+s.command+'</span></button>';
   }).join('');
   slabLayer.innerHTML=center+slabs;
