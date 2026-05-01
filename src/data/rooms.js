@@ -59,56 +59,56 @@ export const rooms = [
 export const archiveSlabs = [
   {
     id: 'SYS-01',
-    title: 'ZAI Terminal',
-    type: 'Execution System',
-    state: 'Active',
-    signal: 'Market pressure / order flow / risk gates',
-    desc: 'A futures-first intelligence terminal built around structured execution logic: imbalance, depth, spread, drift, and decision discipline before trade entry.',
-    command: 'Read execution record'
+    title: 'Terminal',
+    type: 'Execution Layer',
+    state: 'Active — market-facing',
+    signal: 'Order flow / pressure / decision gates',
+    desc: 'A futures-first execution system focused on imbalance, depth, spread control, and disciplined trade entry logic.',
+    command: 'View execution system'
   },
   {
     id: 'SYS-02',
     title: 'Oracle',
-    type: 'Intelligence System',
-    state: 'Evolving',
-    signal: 'Macro / news / scenario simulation',
-    desc: 'A wide-field observation engine for macro pressure, world events, regime shifts, and probabilistic future states — designed to behave like an intelligence desk.',
-    command: 'Open intelligence layer'
+    type: 'Intelligence Layer',
+    state: 'Evolving — macro-aware',
+    signal: 'Global signals / regime shifts',
+    desc: 'A wide-field intelligence system tracking geopolitical pressure, market regimes, and probabilistic future states.',
+    command: 'Open intelligence system'
   },
   {
     id: 'SYS-03',
-    title: 'Restaurant Engine',
-    type: 'Operational System',
-    state: 'Deployed',
+    title: 'Restaurant Systems',
+    type: 'Operational Layer',
+    state: 'Deployed — real-world use',
     signal: 'Inventory / EOD / branch logic',
-    desc: 'A real-world operations system for product usage, stock movement, EOD reporting, location isolation, and management visibility across restaurant branches.',
-    command: 'Inspect operations core'
+    desc: 'A real-world operations layer for restaurant environments, covering product flow, reporting, and multi-location control.',
+    command: 'Inspect operational systems'
   },
   {
     id: 'SYS-04',
     title: 'Research Library',
-    type: 'Knowledge System',
-    state: 'Curated',
-    signal: 'Notes / frameworks / references',
-    desc: 'A disciplined research environment for collecting notes, comparing sources, preserving design logic, and turning scattered ideas into usable frameworks.',
-    command: 'Review research protocol'
+    type: 'Knowledge Layer',
+    state: 'Curated — internal use',
+    signal: 'Frameworks / notes / models',
+    desc: 'A structured environment for preserving research, building frameworks, and turning raw ideas into usable systems.',
+    command: 'Access research layer'
   },
   {
     id: 'SYS-05',
     title: 'World Model',
-    type: 'Cognitive System',
-    state: 'Experimental',
-    signal: 'Causality / memory / simulation',
-    desc: 'A long-horizon modeling layer for connecting events across domains and asking how systems influence each other over time.',
-    command: 'Observe model state'
+    type: 'Cognitive Layer',
+    state: 'Experimental — long horizon',
+    signal: 'Causality / simulation / memory',
+    desc: 'A modeling system exploring how events connect across domains and evolve over time.',
+    command: 'Observe model'
   },
   {
     id: 'SYS-06',
     title: 'Archive Interface',
-    type: 'Experience System',
-    state: 'Forming',
+    type: 'Interface Layer',
+    state: 'Forming — public surface',
     signal: 'Narrative / motion / presence',
-    desc: 'The visible surface of the studio: cinematic navigation, artifact-based content, restrained motion, and a world that reveals itself through interaction.',
-    command: 'Enter interface logic'
+    desc: 'The visible interface of the studio — a controlled environment where systems are revealed through interaction.',
+    command: 'Enter interface'
   }
 ];
