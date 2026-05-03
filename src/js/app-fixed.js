@@ -262,6 +262,14 @@ function updateUI(r){
   requestAnimationFrame(()=>{const copy=document.querySelector('.room-copy');if(copy)copy.classList.add('show');});
 }
 
+function goPrev(){
+  if(deepDive.classList.contains('open')){closeDeepDive();return;}
+  if(inspecting){closeInspection();return;}
+  if(busy)return;
+  current=(current-1+rooms.length)%rooms.length;
+  loadScene(current,true);
+}
+
 function goNext(){
   if(deepDive.classList.contains('open')){closeDeepDive();return;}
   if(inspecting){closeInspection();return;}
@@ -270,7 +278,7 @@ function goNext(){
   if(travelSrc)playTravelTransition(nextIndex,travelSrc);else loadScene(nextIndex);
 }
 
-addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='Enter'||e.key===' ')goNext();});
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key==='Enter'||e.key===' '){e.preventDefault();goNext();}if(e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='Backspace'){e.preventDefault();goPrev();}});
 front.addEventListener('canplay',()=>{front.classList.add('active');keepVideoAlive(front);});
 front.addEventListener('ended',()=>{front.currentTime=0;keepVideoAlive(front);});
 front.addEventListener('pause',()=>{if(travel.style.display!=='block')keepVideoAlive(front);});
@@ -278,5 +286,51 @@ front.addEventListener('error',()=>{front.classList.add('active');});
 back.addEventListener('canplay',()=>{back.loop=true;});
 back.addEventListener('ended',()=>{back.currentTime=0;keepVideoAlive(back);});
 back.addEventListener('error',()=>{});
+
+// === Scroll & swipe navigation (vertical or horizontal, debounced) ===
+let navLock=false;
+function lockNav(ms){navLock=true;setTimeout(()=>{navLock=false;},ms||960);}
+function isInScrollable(el){
+  while(el&&el!==document.body){
+    if(el.classList&&(el.classList.contains('slab-layer')||el.classList.contains('doc-layer')||el.classList.contains('deep-dive')||el.classList.contains('deep-card')))return true;
+    const cs=getComputedStyle(el);
+    if((cs.overflowY==='auto'||cs.overflowY==='scroll')&&el.scrollHeight>el.clientHeight)return true;
+    el=el.parentElement;
+  }
+  return false;
+}
+function navBlocked(target){
+  if(navLock||busy)return true;
+  if(loading&&loading.classList&&!loading.classList.contains('hide'))return true;
+  if(deepDive.classList.contains('open'))return true;
+  if(inspecting)return true;
+  if(target&&isInScrollable(target))return true;
+  return false;
+}
+
+addEventListener('wheel',e=>{
+  if(navBlocked(e.target))return;
+  const dy=e.deltaY,dx=e.deltaX;
+  if(Math.abs(dy)<24&&Math.abs(dx)<24)return;
+  if(Math.abs(dy)>=Math.abs(dx)){if(dy>0)goNext();else goPrev();}
+  else{if(dx>0)goNext();else goPrev();}
+  lockNav(960);
+},{passive:true});
+
+let _tsy=0,_tsx=0,_tt=0;
+addEventListener('touchstart',e=>{
+  const t=e.touches[0];_tsy=t.clientY;_tsx=t.clientX;_tt=Date.now();
+},{passive:true});
+addEventListener('touchend',e=>{
+  if(navBlocked(e.target))return;
+  if(Date.now()-_tt>720)return;
+  const t=e.changedTouches[0];
+  const dy=_tsy-t.clientY,dx=_tsx-t.clientX;
+  const TH=64;
+  if(Math.abs(dy)<TH&&Math.abs(dx)<TH)return;
+  if(Math.abs(dy)>=Math.abs(dx)){if(dy>0)goNext();else goPrev();}
+  else{if(dx>0)goNext();else goPrev();}
+  lockNav(960);
+},{passive:true});
 
 addEventListener('load',()=>{setTimeout(()=>{loading.classList.add('hide');prepareVideo(front,rooms[0],true);updateUI(rooms[0]);},700);});
