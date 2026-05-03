@@ -146,3 +146,30 @@ export const researchDocs = [
   {id:'DOC-05', title:'Ism-e-Azam', type:'Spiritual research', state:'Reserved', signal:'Names, meaning, address', desc:'On the names of the divine, meaning, and the threshold of address. Held in personal record.', pages:null, revised:'2026-04', file:null},
   {id:'DOC-06', title:'Guidance Corpus', type:'Library — runtime', state:'In runtime', signal:'Quran. Shams al-Maarif.', desc:'The guidance corpus is held in the runtime layer, not on the surface. Visible in the chamber as a closed shelf.', pages:null, revised:'2026-04', file:null}
 ];
+
+export const corridorMaxims = [
+  'Restraint is the first feature.',
+  'Build for the quiet hour, not the demo.',
+  'Every system must defend its own existence.',
+  'What the archive shows is what survived.',
+  'Evidence before release.',
+  'A studio of systems, not a portfolio.'
+];
+
+export const studioStats = {
+  founded: 2019,
+  systems: 6,
+  records: 30,
+  released: 12,
+  documents: 6,
+  released_documents: 1,
+  location: 'Toronto'
+};
+
+export const exitRoadmap = [
+  {id:'NOW',     title:'Filling the cinematic chambers',     state:'Now',         signal:'Active build',       desc:'Each room is being given its own content layer. The chamber pattern, scaled across the rest of the flow.', eta:'Active'},
+  {id:'NEXT-01', title:'Live archive signal',                state:'In revision', signal:'GitHub-sourced',     desc:'Last-commit timestamps and a quiet “alive” pulse on systems pushed within the last seven days.', eta:'Q2 2026'},
+  {id:'NEXT-02', title:'Document release pipeline',          state:'Planning',    signal:'Sync layer',         desc:'A folder push that surfaces sealed documents into the research chamber without code changes.', eta:'Q2 2026'},
+  {id:'NEXT-03', title:'Crypto Terminal — execution',   state:'In revision', signal:'Markets',            desc:'Tightening order-book depth, spread discipline, and risk gating for high-volatility regimes.', eta:'Q3 2026'},
+  {id:'NEXT-04', title:'Local-first studio surface',         state:'Sealed',      signal:'Long horizon',       desc:'A move toward a local-resident studio — closer to the work, further from the cloud.', eta:'Long horizon'}
+];

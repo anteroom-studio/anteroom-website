@@ -1,4 +1,4 @@
-import { rooms, archiveSlabs, researchDocs } from '../data/rooms.js';
+import { rooms, archiveSlabs, researchDocs, corridorMaxims, studioStats, exitRoadmap } from '../data/rooms.js';
 
 const root=document.getElementById('pov');
 const loading=document.getElementById('loading');
@@ -19,16 +19,22 @@ const studioSignals=[
   'awaiting inspection...'
 ];
 let studioSignalIndex=0;
-setInterval(()=>{
+let currentSignals=studioSignals;
+let signalLabel='Studio signal';
+function rotateSignal(){
   const el=document.querySelector('.room-note span');
-  if(!el)return;
-  el.classList.add('signal-shift');
-  setTimeout(()=>{
-    studioSignalIndex=(studioSignalIndex+1)%studioSignals.length;
-    el.textContent=studioSignals[studioSignalIndex];
-    el.classList.remove('signal-shift');
-  },360);
-},3200);
+  if(el){
+    el.classList.add('signal-shift');
+    setTimeout(()=>{
+      studioSignalIndex=(studioSignalIndex+1)%currentSignals.length;
+      el.textContent=currentSignals[studioSignalIndex];
+      el.classList.remove('signal-shift');
+    },360);
+  }
+  const delay=(currentSignals===corridorMaxims)?5500:3200;
+  setTimeout(rotateSignal,delay);
+}
+setTimeout(rotateSignal,3200);
 
 function makeVideo(){
   const v=document.createElement('video');
@@ -57,6 +63,9 @@ const mark=document.createElement('div');mark.className='studio-mark';mark.inner
 const line=document.createElement('div');line.className='studio-line';line.textContent='Research and engineering studio / ZAI 2019';root.appendChild(line);
 const slabLayer=document.createElement('div');slabLayer.className='slab-layer';root.appendChild(slabLayer);
 const docLayer=document.createElement('div');docLayer.className='doc-layer';root.appendChild(docLayer);
+const roadmapLayer=document.createElement('div');roadmapLayer.className='roadmap-layer';root.appendChild(roadmapLayer);
+const statsLayer=document.createElement('div');statsLayer.id='studio-stats';statsLayer.className='studio-stats';root.appendChild(statsLayer);
+const preloadVideo=document.createElement('video');preloadVideo.muted=true;preloadVideo.playsInline=true;preloadVideo.preload='auto';preloadVideo.style.cssText='display:none;position:absolute;left:-9999px';document.body.appendChild(preloadVideo);
 let pdfActive=false;
 
 const deepDive=document.createElement('div');
@@ -127,6 +136,8 @@ function closeInspection(){
   slabLayer.querySelectorAll('.artifact-slab').forEach(el=>el.classList.remove('active'));
   docLayer.classList.remove('inspecting');
   docLayer.querySelectorAll('.research-doc').forEach(el=>el.classList.remove('active'));
+  roadmapLayer.classList.remove('inspecting');
+  roadmapLayer.querySelectorAll('.roadmap-item').forEach(el=>el.classList.remove('active'));
 }
 
 function repoList(data, cls){
@@ -156,6 +167,64 @@ function openDocDive(d){
     '<div class="deep-card deep-card--doc '+(isFile?'is-released':'is-sealed')+'">'+head+body+'</div>';
   deepDive.classList.add('open');
   if(isFile){pdfActive=true;try{front.pause();back.pause();}catch(e){}}
+}
+
+function mountThreshold(show){
+  if(!show){statsLayer.classList.remove('show');return;}
+  statsLayer.innerHTML=
+    '<div><span class="stat-label">Founded</span><span class="stat-value">'+studioStats.founded+'</span></div>'+
+    '<div><span class="stat-label">Systems</span><span class="stat-value">'+studioStats.systems+'</span></div>'+
+    '<div><span class="stat-label">Records</span><span class="stat-value">'+studioStats.records+'</span></div>'+
+    '<div><span class="stat-label">Documents</span><span class="stat-value">'+studioStats.documents+'</span></div>'+
+    '<div><span class="stat-label">Rooms</span><span class="stat-value">'+rooms.length+'</span></div>';
+  requestAnimationFrame(()=>statsLayer.classList.add('show'));
+}
+
+function mountExit(show){
+  if(!show){roadmapLayer.classList.remove('show');roadmapLayer.innerHTML='';return;}
+  roadmapLayer.innerHTML=exitRoadmap.map((r,i)=>{
+    const stateSlug=(r.state||'').toLowerCase().replace(/\s+/g,'-');
+    const isNow=r.state==='Now';
+    return '<button class="roadmap-item'+(isNow?' is-now':'')+' item-'+i+'" data-i="'+i+'" data-state="'+r.state+'">'+
+      '<span class="roadmap-spine" aria-hidden="true"></span>'+
+      '<div class="roadmap-top"><span class="roadmap-id">'+r.id+'</span><span class="roadmap-state state-'+stateSlug+'">'+r.state+'</span></div>'+
+      '<strong>'+r.title+'</strong>'+
+      '<small>'+r.signal+(r.eta?' · '+r.eta:'')+'</small>'+
+      '<p>'+r.desc+'</p>'+
+    '</button>';
+  }).join('');
+  requestAnimationFrame(()=>roadmapLayer.classList.add('show'));
+  roadmapLayer.querySelectorAll('.roadmap-item').forEach(el=>{
+    el.onclick=e=>{
+      e.stopPropagation();
+      const i=Number(el.dataset.i);
+      const item=exitRoadmap[i];
+      if(!item)return;
+      inspecting=true;
+      roadmapLayer.classList.add('inspecting');
+      el.classList.add('active');
+      const stateSlug=(item.state||'').toLowerCase().replace(/\s+/g,'-');
+      deepDive.innerHTML='<button class="deep-close" aria-label="Close">×</button>'+
+        '<div class="deep-card deep-card--roadmap state-'+stateSlug+'">'+
+          '<div class="deep-id">'+item.id+' · '+item.state+'</div>'+
+          '<h2>'+item.title+'</h2>'+
+          '<div class="deep-signal">'+(item.signal||'')+'</div>'+
+          '<p class="deep-held">'+(item.desc||'')+'</p>'+
+          '<div class="deep-doc-meta"><span>ETA · '+item.eta+'</span></div>'+
+        '</div>';
+      deepDive.classList.add('open');
+    };
+  });
+}
+
+function preloadNext(idx){
+  const ni=(idx+1)%rooms.length;
+  const nr=rooms[ni];
+  if(!nr||!nr.video||!nr.video[0])return;
+  const url=new URL(nr.video[0],location.href).href;
+  if(preloadVideo.src===url)return;
+  preloadVideo.src=nr.video[0];
+  preloadVideo.load();
 }
 
 function renderDocs(show){
@@ -228,7 +297,7 @@ function loadScene(i,force=false){
   const r=rooms[i],oldCopy=document.querySelector('.room-copy');if(oldCopy)oldCopy.classList.add('out');
   closeDeepDive();renderSlabs(false);prepareVideo(back,r,true);veil.classList.add('in');sweep.classList.add('in');front.classList.add('pushing');
   setTimeout(()=>{back.classList.add('active');front.classList.add('leaving');},180);
-  setTimeout(()=>{swapVideos();updateUI(r);renderSlabs(r.id==='archive');renderDocs(r.id==='research');keepVideoAlive(front);front.classList.remove('pushing');veil.classList.remove('in');sweep.classList.remove('in');busy=false;},860);
+  setTimeout(()=>{swapVideos();updateUI(r);renderSlabs(r.id==='archive');renderDocs(r.id==='research');mountExit(r.id==='exit');mountThreshold(r.id==='threshold');keepVideoAlive(front);front.classList.remove('pushing');veil.classList.remove('in');sweep.classList.remove('in');busy=false;setTimeout(()=>preloadNext(i),900);},860);
 }
 
 function blendIntoScene(nextIndex){
@@ -236,7 +305,7 @@ function blendIntoScene(nextIndex){
   closeDeepDive();renderSlabs(false);prepareVideo(back,r,true);
   back.classList.add('active');back.style.opacity='0';back.style.transition='opacity 160ms ease-out';
   front.style.transition='opacity 160ms ease-out';
-  requestAnimationFrame(()=>{back.style.opacity='1';front.style.opacity='0';setTimeout(()=>{swapVideos();updateUI(r);renderSlabs(r.id==='archive');renderDocs(r.id==='research');keepVideoAlive(front);front.classList.remove('pushing');front.classList.remove('leaving');busy=false;},180);});
+  requestAnimationFrame(()=>{back.style.opacity='1';front.style.opacity='0';setTimeout(()=>{swapVideos();updateUI(r);renderSlabs(r.id==='archive');renderDocs(r.id==='research');mountExit(r.id==='exit');mountThreshold(r.id==='threshold');keepVideoAlive(front);front.classList.remove('pushing');front.classList.remove('leaving');busy=false;setTimeout(()=>preloadNext(nextIndex),900);},180);});
 }
 
 function playTravelTransition(nextIndex,src){
@@ -255,9 +324,15 @@ function playTravelTransition(nextIndex,src){
 }
 
 function updateUI(r){
-  if(r.id==='archive')document.body.classList.add('archive-mode');else document.body.classList.remove('archive-mode');if(r.id==='research')document.body.classList.add('research-mode');else document.body.classList.remove('research-mode');
+  ['threshold','corridor','archive','research','exit'].forEach(m=>document.body.classList.toggle(m+'-mode',r.id===m));
+  document.title='Anteroom — '+r.title;
+  if(r.id==='corridor'){currentSignals=corridorMaxims;signalLabel='Operating principle';}
+  else{currentSignals=studioSignals;signalLabel='Studio signal';}
+  studioSignalIndex=0;
+  if(r.id!=='exit')mountExit(false);
+  if(r.id!=='threshold')mountThreshold(false);
   let ui=document.getElementById('ui');if(!ui){ui=document.createElement('div');ui.id='ui';root.appendChild(ui);}
-  ui.innerHTML='<div class="hud"><div class="room-copy"><div class="kicker">'+r.label+'</div><h1>'+r.title+'</h1><p>'+r.copy+'</p><div class="room-actions"><button class="btn" id="nextBtn">'+r.action+'</button></div></div></div><div class="side-index"><span>'+r.number+'</span><div class="bar"><i style="--progress:'+((current+1)/rooms.length)*100+'%"></i></div><span>'+rooms.length+'</span></div><div class="room-note"><b>Studio signal</b><span>'+studioSignals[studioSignalIndex]+'</span></div>';
+  ui.innerHTML='<div class="hud"><div class="room-copy"><div class="kicker">'+r.label+'</div><h1>'+r.title+'</h1><p>'+r.copy+'</p><div class="room-actions"><button class="btn" id="nextBtn">'+r.action+'</button></div></div></div><div class="side-index"><span>'+r.number+'</span><div class="bar"><i style="--progress:'+((current+1)/rooms.length)*100+'%"></i></div><span>'+rooms.length+'</span></div><div class="room-note"><b>'+signalLabel+'</b><span>'+currentSignals[studioSignalIndex]+'</span></div>';
   document.getElementById('nextBtn').onclick=goNext;
   requestAnimationFrame(()=>{const copy=document.querySelector('.room-copy');if(copy)copy.classList.add('show');});
 }
@@ -292,7 +367,7 @@ let navLock=false;
 function lockNav(ms){navLock=true;setTimeout(()=>{navLock=false;},ms||960);}
 function isInScrollable(el){
   while(el&&el!==document.body){
-    if(el.classList&&(el.classList.contains('slab-layer')||el.classList.contains('doc-layer')||el.classList.contains('deep-dive')||el.classList.contains('deep-card')))return true;
+    if(el.classList&&(el.classList.contains('slab-layer')||el.classList.contains('doc-layer')||el.classList.contains('roadmap-layer')||el.classList.contains('deep-dive')||el.classList.contains('deep-card')))return true;
     const cs=getComputedStyle(el);
     if((cs.overflowY==='auto'||cs.overflowY==='scroll')&&el.scrollHeight>el.clientHeight)return true;
     el=el.parentElement;
@@ -333,4 +408,18 @@ addEventListener('touchend',e=>{
   lockNav(960);
 },{passive:true});
 
-addEventListener('load',()=>{setTimeout(()=>{loading.classList.add('hide');prepareVideo(front,rooms[0],true);updateUI(rooms[0]);},700);});
+addEventListener('load',()=>{
+  prepareVideo(front,rooms[0],true);
+  updateUI(rooms[0]);
+  if(rooms[0].id==='threshold')mountThreshold(true);
+  let canPlay=false,minElapsed=false,revealed=false;
+  const tryReveal=()=>{
+    if(revealed||!canPlay||!minElapsed)return;
+    revealed=true;
+    loading.classList.add('hide');
+    setTimeout(()=>preloadNext(0),900);
+  };
+  front.addEventListener('canplay',()=>{canPlay=true;tryReveal();},{once:true});
+  setTimeout(()=>{minElapsed=true;tryReveal();},800);
+  setTimeout(()=>{canPlay=true;minElapsed=true;tryReveal();},5500);
+});

@@ -155,3 +155,106 @@ body.research-mode .doc-layer::-webkit-scrollbar-thumb{background:rgba(201,169,9
   body.research-mode .room-copy::before,
   .deep-seal{animation:none!important}
 }
+
+/* ===== STUDIO BRAND THREAD (always visible) ===== */
+.studio-mark{position:fixed;top:24px;left:28px;z-index:60;display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:18px;letter-spacing:.06em;color:var(--ink);pointer-events:none;opacity:.92}
+.studio-mark i{display:block;width:18px;height:22px;border:1px solid var(--brass);border-bottom:0;border-radius:12px 12px 1px 1px;box-shadow:0 0 18px rgba(201,169,97,.18),inset 0 0 12px rgba(201,169,97,.10)}
+.studio-line{position:fixed;top:32px;right:28px;z-index:60;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);pointer-events:none;max-width:46vw;text-align:right}
+
+/* ===== THRESHOLD (000) — STUDIO STAT PLATE ===== */
+.studio-stats{position:fixed;right:28px;bottom:32px;z-index:55;display:none;grid-template-columns:auto auto;gap:6px 22px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:0;transition:opacity .9s var(--alive-ease);pointer-events:none}
+.studio-stats.show{opacity:.92}
+body.threshold-mode .studio-stats{display:grid}
+.studio-stats > div{display:contents}
+.studio-stats .stat-label{color:var(--dim)}
+.studio-stats .stat-value{color:var(--brass);text-align:right;font-weight:500}
+
+/* ===== CORRIDOR (001) — MAXIM TREATMENT ===== */
+body.corridor-mode .room-note{right:28px;bottom:54px;left:auto;width:340px;opacity:.92;background:transparent;border:0;padding:0}
+body.corridor-mode .room-note::before{content:'';display:block;width:48px;height:1px;background:#c9a961;margin:0 0 22px;opacity:.7}
+body.corridor-mode .room-note b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:#c9a961;margin-bottom:14px}
+body.corridor-mode .room-note span{display:block;font-family:var(--serif);font-size:clamp(20px,2.4vw,30px);font-weight:300;line-height:1.18;letter-spacing:-.01em;color:var(--ink);transition:opacity .55s var(--alive-ease),transform .55s var(--alive-ease),filter .55s var(--alive-ease)}
+body.corridor-mode .room-note span.signal-shift{opacity:0;transform:translateY(8px);filter:blur(5px)}
+
+/* ===== EXIT (004) — UNFINISHED DOOR / ROADMAP ===== */
+body.exit-mode .hud{display:grid;grid-template-columns:minmax(420px,47vw) 1fr;align-items:start;padding:142px 0 40px 56px;z-index:58;pointer-events:none}
+body.exit-mode .room-copy{width:40vw;max-width:700px;padding:46px 50px;border:1px dashed rgba(244,228,184,.28);background:linear-gradient(145deg,rgba(20,17,12,.78),rgba(6,5,4,.94));box-shadow:0 0 100px rgba(201,169,97,.08);position:relative}
+body.exit-mode .room-copy::before{content:'';position:absolute;top:24px;right:24px;width:10px;height:10px;border:1px solid rgba(244,228,184,.55);background:transparent;animation:doc-seal-breath 5.4s ease-in-out infinite}
+body.exit-mode .room-copy::after{content:'';display:block;width:78%;height:1px;margin:24px 0 0;background:linear-gradient(90deg,rgba(201,169,97,.45),transparent)}
+body.exit-mode .room-copy .kicker{font-size:13px;letter-spacing:.34em;margin-bottom:22px;color:#d7b765}
+body.exit-mode .room-copy h1{font-size:clamp(48px,5.2vw,72px);line-height:.94;letter-spacing:-.03em;color:#f4ead7}
+body.exit-mode .room-copy p{font-size:clamp(15px,1.32vw,20px);line-height:1.74;width:min(520px,100%);color:#d6cbb9;margin-top:24px}
+body.exit-mode .room-actions{display:flex;margin-top:30px;pointer-events:auto}
+body.exit-mode .room-actions .btn{font-size:12px;padding:16px 22px;background:rgba(201,169,97,.06);border-color:rgba(244,228,184,.28)}
+body.exit-mode .room-note{right:auto;left:56px;bottom:54px;width:300px;opacity:.84;background:transparent;border:0;padding:0}
+body.exit-mode .room-note::before{content:'';display:block;width:48px;height:1px;background:#c9a961;margin:0 0 22px;opacity:.6}
+body.exit-mode .room-note b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:#c9a961;margin-bottom:10px}
+body.exit-mode .room-note span{display:block;font-size:14px;line-height:1.55;color:#d8c9ac;transition:opacity .35s var(--alive-ease),transform .35s var(--alive-ease),filter .35s var(--alive-ease)}
+body.exit-mode .room-note span.signal-shift{opacity:0;transform:translateY(5px);filter:blur(4px)}
+body.exit-mode .side-index{left:auto;right:32px;bottom:40%;display:grid;gap:16px;color:#d7b765;z-index:70}
+
+/* Roadmap layer — right column, sketchy/blueprint feel */
+.roadmap-layer{position:fixed;inset:0;z-index:46;pointer-events:none;opacity:0;transition:opacity .8s var(--alive-ease)}
+.roadmap-layer.show{opacity:1}
+body.exit-mode .roadmap-layer{position:absolute;left:auto;right:3.5vw;top:140px;bottom:40px;width:34vw;max-width:500px;height:auto;display:flex;flex-direction:column;gap:12px;overflow-y:auto;overflow-x:hidden;padding-right:10px;scrollbar-gutter:stable;pointer-events:auto;transform:none!important}
+body.exit-mode .roadmap-layer::-webkit-scrollbar{width:6px}
+body.exit-mode .roadmap-layer::-webkit-scrollbar-thumb{background:rgba(201,169,97,.30);border-radius:10px}
+
+.roadmap-item{position:relative;width:100%;border:1px dashed rgba(201,169,97,.32);background:linear-gradient(180deg,rgba(20,17,13,.55),rgba(6,5,4,.78));color:var(--ink);text-align:left;padding:18px 24px 20px;cursor:none;transition:.42s var(--alive-ease);overflow:hidden;border-radius:1px;font-family:var(--sans)}
+.roadmap-item.is-now{border:1px solid rgba(244,228,184,.55);background:linear-gradient(180deg,rgba(34,28,18,.70),rgba(10,8,6,.88));box-shadow:0 0 70px rgba(244,228,184,.06),inset 0 1px 0 rgba(244,228,184,.12),0 22px 70px rgba(0,0,0,.46);padding:24px 28px 26px}
+.roadmap-spine{position:absolute;left:0;top:14px;bottom:14px;width:2px;background:linear-gradient(180deg,transparent,rgba(201,169,97,.4),transparent);opacity:.55;z-index:3}
+.roadmap-item.is-now .roadmap-spine{opacity:.95;background:linear-gradient(180deg,transparent,rgba(244,228,184,.78),transparent);animation:doc-seal-breath 5s ease-in-out infinite}
+.roadmap-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;position:relative;z-index:2}
+.roadmap-id{color:var(--deep)}
+.roadmap-state{text-align:right}
+.roadmap-state.state-now{color:#f4e4b8;animation:doc-runtime-pulse 4.6s ease-in-out infinite}
+.roadmap-state.state-in-revision{color:#c9a961}
+.roadmap-state.state-planning{color:#a98d50}
+.roadmap-state.state-sealed{color:#8a8275}
+.roadmap-state.state-queued{color:#a98d50}
+.roadmap-item strong{display:block;font-family:var(--serif);font-size:clamp(22px,2.2vw,30px);font-weight:300;line-height:.98;letter-spacing:-.018em;color:#f3e8d1;margin:4px 0 4px;position:relative;z-index:2}
+.roadmap-item.is-now strong{font-size:clamp(28px,2.8vw,40px);color:#f7eccd}
+.roadmap-item small{display:block;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.16em;text-transform:uppercase;margin-top:4px;position:relative;z-index:2}
+.roadmap-item p{margin:10px 0 0;color:#bfb39f;font-size:13px;line-height:1.55;position:relative;z-index:2}
+.roadmap-item:hover{border-color:rgba(244,228,184,.65);background:linear-gradient(180deg,rgba(40,32,22,.78),rgba(10,8,6,.9));transform:translateX(-4px)}
+.roadmap-item.is-now:hover{box-shadow:0 0 110px rgba(244,228,184,.12),inset 0 1px 0 rgba(244,228,184,.20),0 28px 90px rgba(0,0,0,.56)}
+.roadmap-layer:hover .roadmap-item{opacity:.55;filter:blur(.6px) brightness(.84)}
+.roadmap-layer .roadmap-item:hover{opacity:1;filter:none}
+.roadmap-layer.inspecting{opacity:.18;filter:blur(2px)}
+.roadmap-layer.inspecting .roadmap-item{pointer-events:none}
+
+.deep-card--roadmap{width:min(720px,92vw);padding:clamp(22px,3.5vw,40px);border:1px solid rgba(244,228,184,.30);background:linear-gradient(145deg,rgba(28,22,12,.68),rgba(5,4,3,.90));display:flex;flex-direction:column;gap:10px}
+.deep-card--roadmap.state-now{border:1px solid rgba(244,228,184,.60);box-shadow:0 0 100px rgba(244,228,184,.10),0 60px 220px rgba(0,0,0,.78)}
+.deep-card--roadmap .deep-id{color:#c9a961;font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase}
+.deep-card--roadmap h2{font-family:var(--serif);font-weight:300;font-size:clamp(34px,5vw,58px);line-height:.92;margin:6px 0 2px;letter-spacing:-.025em;color:#f3e8d1}
+.deep-card--roadmap .deep-signal{color:#a98d50;font-size:13px;letter-spacing:.06em;margin-bottom:8px}
+.deep-card--roadmap .deep-held{color:#d7ccba;line-height:1.78;font-size:clamp(15px,2.2vw,18px);margin:6px 0 14px}
+.deep-card--roadmap .deep-doc-meta{display:flex;gap:24px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#a98d50;margin-top:4px}
+
+/* Hide the brand thread on small screens to free room */
+@media(max-width:760px){
+  .studio-mark{top:14px;left:14px;font-size:15px}
+  .studio-mark i{width:14px;height:18px}
+  .studio-line{display:none}
+  .studio-stats{right:16px;bottom:16px;gap:4px 14px}
+  body.exit-mode .hud{display:block!important;padding:18px 16px 0!important}
+  body.exit-mode .room-copy{width:100%!important;max-width:none!important;padding:14px!important;background:linear-gradient(135deg,rgba(8,7,5,.78),rgba(0,0,0,.48))!important;backdrop-filter:blur(10px)}
+  body.exit-mode .room-copy h1{font-size:34px!important;line-height:.96!important;margin:0!important}
+  body.exit-mode .room-copy p{font-size:12px!important;max-height:88px!important;overflow:auto;margin-top:10px!important}
+  body.exit-mode .room-actions{display:none!important}
+  body.exit-mode .side-index{display:none!important}
+  body.exit-mode .roadmap-layer{left:0!important;top:190px!important;right:0!important;bottom:0!important;width:100%!important;height:auto!important;max-width:none!important;z-index:72!important;padding:12px 14px 90px!important;-webkit-overflow-scrolling:touch}
+  .roadmap-item{cursor:pointer!important;border-radius:4px!important}
+  .roadmap-layer:hover .roadmap-item{opacity:1!important;filter:none!important;transform:none!important}
+  .roadmap-layer .roadmap-item:hover{transform:none!important}
+  body.corridor-mode .room-note{left:14px!important;right:14px!important;bottom:18px!important;width:auto!important}
+  body.corridor-mode .room-note span{font-size:18px!important}
+  .deep-card--roadmap{padding:18px!important;max-height:88vh!important}
+  .deep-card--roadmap h2{font-size:28px!important}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .roadmap-item.is-now .roadmap-spine,
+  .roadmap-state.state-now,
+  body.exit-mode .room-copy::before{animation:none!important}
+}
