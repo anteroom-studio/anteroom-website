@@ -1,4 +1,4 @@
-import { rooms, archiveSlabs } from '../data/rooms.js';
+import { rooms, archiveSlabs, researchDocs } from '../data/rooms.js';
 
 const root=document.getElementById('pov');
 const loading=document.getElementById('loading');
@@ -56,6 +56,8 @@ const cursor=document.createElement('div');cursor.className='cursor';document.bo
 const mark=document.createElement('div');mark.className='studio-mark';mark.innerHTML='<i></i><span>Anteroom</span>';root.appendChild(mark);
 const line=document.createElement('div');line.className='studio-line';line.textContent='Research and engineering studio / ZAI 2019';root.appendChild(line);
 const slabLayer=document.createElement('div');slabLayer.className='slab-layer';root.appendChild(slabLayer);
+const docLayer=document.createElement('div');docLayer.className='doc-layer';root.appendChild(docLayer);
+let pdfActive=false;
 
 const deepDive=document.createElement('div');
 deepDive.id='deepDive';
@@ -90,7 +92,7 @@ function keepVideoAlive(v){
   if(!v.src)return;
   if(v.ended||v.paused||v.readyState<2)safePlay(v);
 }
-setInterval(()=>{if(travel.style.display!=='block')keepVideoAlive(front);},1200);
+setInterval(()=>{if(travel.style.display!=='block'&&!pdfActive)keepVideoAlive(front);},1200);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(()=>keepVideoAlive(front),250);});
 
 function applyDrift(v,x,y){
@@ -123,6 +125,8 @@ function swapVideos(){
 function closeInspection(){
   inspecting=false;slabLayer.classList.remove('inspecting');
   slabLayer.querySelectorAll('.artifact-slab').forEach(el=>el.classList.remove('active'));
+  docLayer.classList.remove('inspecting');
+  docLayer.querySelectorAll('.research-doc').forEach(el=>el.classList.remove('active'));
 }
 
 function repoList(data, cls){
@@ -135,9 +139,61 @@ function openDeepDive(data){
   deepDive.classList.add('open');
 }
 
+function openDocDive(d){
+  const isFile=!!d.file;
+  const stateSlug=(d.state||'').toLowerCase().replace(/\s+/g,'-');
+  const head='<div class="deep-id">'+d.id+' · '+(d.type||'Document')+'</div>'+
+    '<h2>'+d.title+'</h2>'+
+    '<div class="deep-state state-'+stateSlug+'">'+d.state+'</div>'+
+    '<div class="deep-signal">'+(d.signal||'')+'</div>';
+  const body=isFile
+    ? '<div class="deep-pdf"><iframe src="'+d.file+'#toolbar=1&navpanes=0&view=FitH" title="'+d.title+'" loading="lazy"></iframe></div>'+
+      '<div class="deep-doc-meta">'+(d.pages?'<span>'+d.pages+' pages</span>':'')+(d.revised?'<span>revised '+d.revised+'</span>':'')+'</div>'
+    : '<p class="deep-held">'+(d.desc||'')+'</p>'+
+      '<div class="deep-seal">— this chamber is sealed —</div>'+
+      (d.revised?'<div class="deep-doc-meta"><span>last revised '+d.revised+'</span></div>':'');
+  deepDive.innerHTML='<button class="deep-close" aria-label="Close">×</button>'+
+    '<div class="deep-card deep-card--doc '+(isFile?'is-released':'is-sealed')+'">'+head+body+'</div>';
+  deepDive.classList.add('open');
+  if(isFile){pdfActive=true;try{front.pause();back.pause();}catch(e){}}
+}
+
+function renderDocs(show){
+  if(!show){docLayer.classList.remove('show');docLayer.innerHTML='';return;}
+  docLayer.innerHTML=researchDocs.map((d,i)=>{
+    const stateSlug=(d.state||'').toLowerCase().replace(/\s+/g,'-');
+    const released=!!d.file;
+    return '<button class="research-doc doc-'+i+(released?' is-released':'')+'" data-i="'+i+'" data-state="'+d.state+'">'+
+      '<span class="doc-seal" aria-hidden="true"></span>'+
+      '<span class="doc-spine" aria-hidden="true"></span>'+
+      '<span class="doc-light" aria-hidden="true"></span>'+
+      '<div class="doc-top"><span class="doc-id">'+d.id+'</span><span class="doc-state state-'+stateSlug+'">'+d.state+'</span></div>'+
+      '<strong>'+d.title+'</strong>'+
+      '<small>'+d.type+(d.pages?' · '+d.pages+' pages':'')+'</small>'+
+      '<em>'+(d.signal||'')+'</em>'+
+      '<p>'+d.desc+'</p>'+
+      '<span class="doc-cta">'+(released?'Open document →':'Held')+'</span>'+
+    '</button>';
+  }).join('');
+  requestAnimationFrame(()=>docLayer.classList.add('show'));
+  docLayer.querySelectorAll('.research-doc').forEach(el=>{
+    el.onclick=e=>{
+      e.stopPropagation();
+      const i=Number(el.dataset.i);
+      const d=researchDocs[i];
+      if(!d)return;
+      inspecting=true;
+      docLayer.classList.add('inspecting');
+      el.classList.add('active');
+      openDocDive(d);
+    };
+  });
+}
+
 function closeDeepDive(){
   deepDive.classList.remove('open');
   closeInspection();
+  if(pdfActive){pdfActive=false;setTimeout(()=>keepVideoAlive(front),60);}
 }
 
 deepDive.addEventListener('click',e=>{if(e.target===deepDive||e.target.classList.contains('deep-close'))closeDeepDive();});
@@ -172,7 +228,7 @@ function loadScene(i,force=false){
   const r=rooms[i],oldCopy=document.querySelector('.room-copy');if(oldCopy)oldCopy.classList.add('out');
   closeDeepDive();renderSlabs(false);prepareVideo(back,r,true);veil.classList.add('in');sweep.classList.add('in');front.classList.add('pushing');
   setTimeout(()=>{back.classList.add('active');front.classList.add('leaving');},180);
-  setTimeout(()=>{swapVideos();updateUI(r);renderSlabs(r.id==='archive');keepVideoAlive(front);front.classList.remove('pushing');veil.classList.remove('in');sweep.classList.remove('in');busy=false;},860);
+  setTimeout(()=>{swapVideos();updateUI(r);renderSlabs(r.id==='archive');renderDocs(r.id==='research');keepVideoAlive(front);front.classList.remove('pushing');veil.classList.remove('in');sweep.classList.remove('in');busy=false;},860);
 }
 
 function blendIntoScene(nextIndex){
@@ -180,7 +236,7 @@ function blendIntoScene(nextIndex){
   closeDeepDive();renderSlabs(false);prepareVideo(back,r,true);
   back.classList.add('active');back.style.opacity='0';back.style.transition='opacity 160ms ease-out';
   front.style.transition='opacity 160ms ease-out';
-  requestAnimationFrame(()=>{back.style.opacity='1';front.style.opacity='0';setTimeout(()=>{swapVideos();updateUI(r);renderSlabs(r.id==='archive');keepVideoAlive(front);front.classList.remove('pushing');front.classList.remove('leaving');busy=false;},180);});
+  requestAnimationFrame(()=>{back.style.opacity='1';front.style.opacity='0';setTimeout(()=>{swapVideos();updateUI(r);renderSlabs(r.id==='archive');renderDocs(r.id==='research');keepVideoAlive(front);front.classList.remove('pushing');front.classList.remove('leaving');busy=false;},180);});
 }
 
 function playTravelTransition(nextIndex,src){
@@ -199,7 +255,7 @@ function playTravelTransition(nextIndex,src){
 }
 
 function updateUI(r){
-  if(r.id==='archive')document.body.classList.add('archive-mode');else document.body.classList.remove('archive-mode');
+  if(r.id==='archive')document.body.classList.add('archive-mode');else document.body.classList.remove('archive-mode');if(r.id==='research')document.body.classList.add('research-mode');else document.body.classList.remove('research-mode');
   let ui=document.getElementById('ui');if(!ui){ui=document.createElement('div');ui.id='ui';root.appendChild(ui);}
   ui.innerHTML='<div class="hud"><div class="room-copy"><div class="kicker">'+r.label+'</div><h1>'+r.title+'</h1><p>'+r.copy+'</p><div class="room-actions"><button class="btn" id="nextBtn">'+r.action+'</button></div></div></div><div class="side-index"><span>'+r.number+'</span><div class="bar"><i style="--progress:'+((current+1)/rooms.length)*100+'%"></i></div><span>'+rooms.length+'</span></div><div class="room-note"><b>Studio signal</b><span>'+studioSignals[studioSignalIndex]+'</span></div>';
   document.getElementById('nextBtn').onclick=goNext;

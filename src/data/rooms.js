@@ -137,3 +137,12 @@ export const archiveSlabs = [
     ]
   }
 ];
+
+export const researchDocs = [
+  {id:'DOC-01', title:'Password Cracking Workflow', type:'OSINT field paper', state:'Released', signal:'Hash recovery / dictionary chaining', desc:'A field-grade workflow for hash recovery, dictionary discipline, and rule chaining. Released for operational use.', pages:14, revised:'2026-04', file:'assets/research/password-cracking-workflow.pdf'},
+  {id:'DOC-02', title:'Must Have', type:'Foundational reference', state:'Held', signal:'Internal canon', desc:'A foundational reference held in the runtime layer. The chamber sees the seal, not the page.', pages:null, revised:'2026-04', file:null},
+  {id:'DOC-03', title:'Meta-Learning Notes', type:'AGI working transcript', state:'Reserved', signal:'Few-shot adaptation', desc:'Working transcripts on few-shot adaptation, learning to learn, and the seams where meta-learning collapses.', pages:null, revised:'2026-04', file:null},
+  {id:'DOC-04', title:'Attention Mechanisms', type:'AGI working transcript', state:'Reserved', signal:'Transformer limits', desc:'On what limits transformers from human-shaped reasoning. A draft chamber, not yet sealed.', pages:null, revised:'2026-04', file:null},
+  {id:'DOC-05', title:'Ism-e-Azam', type:'Spiritual research', state:'Reserved', signal:'Names, meaning, address', desc:'On the names of the divine, meaning, and the threshold of address. Held in personal record.', pages:null, revised:'2026-04', file:null},
+  {id:'DOC-06', title:'Guidance Corpus', type:'Library — runtime', state:'In runtime', signal:'Quran. Shams al-Maarif.', desc:'The guidance corpus is held in the runtime layer, not on the surface. Visible in the chamber as a closed shelf.', pages:null, revised:'2026-04', file:null}
+];
