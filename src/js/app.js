@@ -312,37 +312,6 @@ function playTravelTransition(nextIndex, src) {
   }, 220);
 }
 
-  travel.pause();
-  travel.src = src;
-  travel.load();
-  travel.currentTime = 0;
-  travel.style.display = 'block';
-  requestAnimationFrame(() => { travel.style.opacity = '1'; });
-
-  function finishTravel() {
-    if (finished) return;
-    finished = true;
-    travel.pause();
-    travel.style.opacity = '0';
-    setTimeout(() => { travel.style.display = 'none'; }, 220);
-    arriveScene(nextIndex);
-  }
-
-  const fallbackTimer = setTimeout(finishTravel, 8200);
-  travel.onended = () => {
-    clearTimeout(fallbackTimer);
-    finishTravel();
-  };
-
-  const p = travel.play();
-  if (p && p.catch) {
-    p.catch(() => {
-      clearTimeout(fallbackTimer);
-      finishTravel();
-    });
-  }
-}
-
 function updateUI(r) {
   if (r.id === 'archive') document.body.classList.add('archive-mode');
   else document.body.classList.remove('archive-mode');
